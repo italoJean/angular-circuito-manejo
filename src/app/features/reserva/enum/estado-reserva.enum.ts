@@ -1,0 +1,6 @@
+export enum EstadoReservaEnum{
+  RESERVADO = 'RESERVADO',
+  EN_PROGRESO = 'EN PROGRESO',
+  FINALIZADO = 'FINALIZADO',
+  CANCELADO = 'CANCELADO'
+}

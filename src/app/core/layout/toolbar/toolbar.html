@@ -1,0 +1,41 @@
+<mat-toolbar>
+  <button matIconButton class="example-icon" aria-label="Example icon-button with menu icon"
+   matTooltip="Menu"
+ matTooltipPosition="below"
+ (click)="drawer.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>My App</span>
+  <span class="example-spacer"></span>
+  <button matIconButton class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <mat-icon>favorite</mat-icon>
+  </button>
+  <app-settings-menu></app-settings-menu>
+</mat-toolbar>
+
+<mat-drawer-container class="example-container">
+  <mat-drawer
+   #drawer
+  [mode]="isMobile() ? 'over' : 'side'" 
+  [opened]="!isMobile()"
+  position="start">
+  <!-- 
+  #drawer → referencia local para poder controlarlo en TypeScript
+
+  [mode]="isMobile() ? 'over' : 'side'"
+     "over" → en móvil, el drawer aparece superpuesto (como un overlay).
+     "side" → en escritorio, el drawer aparece fijo al costado. 
+     
+  [opened]="!isMobile()"
+     En móvil → false (drawer cerrado por defecto).
+     En escritorio → true (drawer abierto por defecto).
+
+  position="start" → lo muestra en el lado izquierdo
+-->
+    <app-sidebar [isMobile]="isMobile()" (itemClicked)="onNavigate()"></app-sidebar>
+  </mat-drawer>
+  <mat-drawer-content style="padding: 5px;">
+
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>

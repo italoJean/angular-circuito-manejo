@@ -1,0 +1,13 @@
+<section>
+   <button mat-raised-button (click)="openCreateModal()">Nuevo Vehiculo</button>
+   
+  <app-grid
+    [displayedColumns]="displayedColumns"
+    [data]="data()"
+    [columnLabels]="columnLabels()"
+    [sortableColumns]="sortables"
+  (edit)="openEditModal($event)"
+    (delete)="deleteVehiculo($event)"
+  ></app-grid>
+  
+</section>

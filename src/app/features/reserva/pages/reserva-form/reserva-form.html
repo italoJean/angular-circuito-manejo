@@ -1,0 +1,100 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Editar Reserva' : 'Nueva Reserva' }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="flex flex-col gap-4">
+
+  <!-- <mat-form-field appearance="outline">
+    <mat-label>Cliente</mat-label>
+    <input matInput placeholder="Buscar por nombre o DNI" [(ngModel)]="filtroUsuario" name="filtroUsuario" />
+    <mat-select formControlName="usuarioId">
+
+      @for (usuario of usuariosFiltrados; track $index) {
+        <mat-option [value]="usuario.id">
+          {{ usuario.nombre }} ({{ usuario.numeroDocumento }})
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Paquete</mat-label>
+    <input matInput placeholder="Buscar paquete" [(ngModel)]="filtroPaquete" name="filtroPaquete" />
+    <mat-select formControlName="paqueteId">
+      @for (paquete of paquetesFiltrados; track $index) {
+  <mat-option [value]="paquete.id">
+        {{ paquete.nombre }} - {{ paquete.precioTotal }}
+      </mat-option>
+      }
+    
+    </mat-select>
+  </mat-form-field> -->
+
+   <!-- Usuario -->
+  <mat-form-field appearance="outline">
+    <mat-label>Cliente</mat-label>
+    <input
+      matInput
+      placeholder="Buscar por nombre o DNI"
+      [(ngModel)]="filtroUsuario"
+      name="filtroUsuario"
+      [ngModelOptions]="{standalone: true}"
+    />
+    <mat-select formControlName="usuarioId">
+      <mat-option *ngFor="let usuario of usuariosFiltrados" [value]="usuario.id">
+        {{ usuario.nombre }} ({{ usuario.numeroDocumento }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Paquete -->
+  <mat-form-field appearance="outline">
+    <mat-label>Paquete</mat-label>
+    <input
+      matInput
+      placeholder="Buscar paquete"
+      [(ngModel)]="filtroPaquete"
+      name="filtroPaquete"
+      [ngModelOptions]="{standalone: true}"
+    />
+    <mat-select formControlName="paqueteId">
+      <mat-option *ngFor="let paquete of paquetesFiltrados" [value]="paquete.id">
+        {{ paquete.nombre }} - {{ paquete.precioTotal | currency:'PEN' }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Fecha -->
+  <mat-form-field appearance="outline">
+    <mat-label>Fecha de Reserva</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="fechaReserva" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <!-- Hora -->
+  <mat-form-field appearance="outline">
+    <mat-label>Hora</mat-label>
+    <input matInput 
+    [matTimepicker]="timepicker" formControlName="hora" />
+  <mat-timepicker #timepicker/>
+  <mat-timepicker-toggle [for]="timepicker" matSuffix/>
+  </mat-form-field>
+
+  <!-- Estado solo si se está editando -->
+  <mat-form-field *ngIf="isEditing" appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select formControlName="estado">
+      <mat-option *ngFor="let estado of ['PENDIENTE', 'CONFIRMADA', 'CANCELADA']" [value]="estado">
+        {{ estado }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()">
+    {{ isEditing ? 'Actualizar' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>

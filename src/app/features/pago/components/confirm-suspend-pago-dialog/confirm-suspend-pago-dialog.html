@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>
+  <mat-icon color="warn">warning</mat-icon>
+  Suspender Pago
+</h2>
+
+<mat-dialog-content>
+  <div class="suspend-dialog-content">
+    <p class="main-message">
+      ¿Deseas suspender el pago <strong>#{{ data.numeroBoleta }}</strong>?
+    </p>
+
+    <div class="details">
+      <div class="detail-item">
+        <span class="label">Monto Total:</span>
+        <span class="value">{{ formatMonto(data.monto) }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Tipo de Pago:</span>
+        <span class="value">{{ data.tipoPago }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Cuotas Pendientes:</span>
+        <span class="value">{{ data.pendientes }}</span>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <mat-icon>info</mat-icon>
+      <p>
+        Esta acción aplicará a <strong>todas las cuotas pendientes</strong> asociadas a este pago.
+        Las cuotas ya pagadas no serán afectadas.
+      </p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="confirmar()">
+    <mat-icon>pause_circle</mat-icon>
+    Suspender Pago
+  </button>
+</mat-dialog-actions>

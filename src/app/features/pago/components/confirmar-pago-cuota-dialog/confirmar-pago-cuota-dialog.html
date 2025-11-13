@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Confirmar Pago</h2>
+
+<mat-dialog-content>
+  <p>¿Seguro que deseas pagar la cuota #{{ data.numeroCuota }}?</p>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Método de pago</mat-label>
+    <mat-select [(value)]="metodoSeleccionado">
+      @for (m of metodosPago; track m) {
+        <mat-option [value]="m">{{ m }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="confirmar()">Confirmar</button>
+</mat-dialog-actions>

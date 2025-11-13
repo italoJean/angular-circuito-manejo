@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Editar Paquete' : 'Nuevo Paquete' }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="flex flex-col gap-3">
+  <mat-form-field appearance="outline">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Apellido</mat-label>
+    <input matInput formControlName="apellido" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Tipo Documento</mat-label>
+    <mat-select formControlName="tipoDocumento">
+      @for (tipo of tipoDocumentos; track $index) {
+        <mat-option [value]="tipo">{{ tipo }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Numero Documento</mat-label>
+    <input matInput type="number" formControlName="numeroDocumento" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Telefono</mat-label>
+    <input matInput type="number" formControlName="telefono" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput type="email" formControlName="email" />
+  </mat-form-field>
+
+  <!-- <mat-form-field appearance="outline">
+    <mat-label>Fecha Registro</mat-label>
+    <input matInput type="date" formControlName="fechaRegistro" />
+  </mat-form-field> -->
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()">
+    {{ isEditing ? 'Actualizar' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,63 @@
+.suspend-dialog-content {
+  padding: 16px 0;
+
+  .main-message {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .details {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .label {
+        font-weight: 500;
+        color: #666;
+      }
+
+      .value {
+        font-weight: 600;
+        color: #333;
+      }
+    }
+  }
+
+  .warning-box {
+    display: flex;
+    gap: 12px;
+    background-color: #fff3cd;
+    border-left: 4px solid #ff9800;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+
+    mat-icon {
+      color: #ff9800;
+      flex-shrink: 0;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #856404;
+      line-height: 1.5;
+    }
+  }
+}
+
+mat-dialog-actions button {
+  gap: 8px;
+}

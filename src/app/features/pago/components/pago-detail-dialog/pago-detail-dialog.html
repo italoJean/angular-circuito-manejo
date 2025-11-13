@@ -1,0 +1,223 @@
+<h2 mat-dialog-title>Detalle del Pago #{{ data.numeroBoleta }}</h2>
+<mat-dialog-content class="detail-dialog-content">
+  @if (data) {
+  <!-- Tarjeta de Información del Usuario -->
+  <mat-card class="info-card usuario-card">
+    <mat-card-header>
+      <mat-card-title> <mat-icon>person</mat-icon> Información del Usuario </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Nombre Completo:</span>
+          <span class="value">{{ usuarioCompleto }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Email:</span> <span class="value">{{ usuarioEmail }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Teléfono:</span> <span class="value">{{ usuarioTelefono }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tipo de Documento:</span>
+          <span class="value">{{ usuarioTipoDocumento }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">N° Documento:</span>
+          <span class="value">{{ usuarioNumeroDocumento }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <!-- Tarjeta de Información del Paquete -->
+  <mat-card class="info-card paquete-card">
+    <mat-card-header>
+      <mat-card-title> <mat-icon>card_giftcard</mat-icon> Información del Paquete </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Nombre del Paquete:</span>
+          <span class="value">{{ paqueteInfo }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Descripción:</span>
+          <span class="value">{{ paqueteDescripcion }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Duración:</span> <span class="value">{{ paqueteDuracion }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Precio del Paquete:</span>
+          <span class="value monto">{{ paquetePrecio }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <!-- Tarjeta de Información del Pago -->
+  <mat-card class="info-card pago-card">
+    <mat-card-header>
+      <mat-card-title> <mat-icon>receipt</mat-icon> Información del Pago </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">N° Boleta:</span> <span class="value">{{ data.numeroBoleta }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Monto Total:</span>
+          <span class="value monto">{{ formatMonto(data.monto) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tipo de Pago:</span> <span class="value">{{ data.tipoPago }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Método de Pago:</span>
+          <span class="value">{{ data.metodoPago }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Fecha del Pago:</span>
+          <span class="value">{{ data.fechaPago | date : 'medium' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Estado:</span>
+          <span class="value" [ngClass]="'estado-' + data.estado.toLowerCase()">
+            {{ data.estado }}
+          </span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <!-- Tabla de Cuotas con Resumen -->
+  @if (isPagoCuotas && hasCuotas) {
+  <mat-card class="cuotas-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>event_note</mat-icon> Detalle de Cuotas ({{ totalCuotas }} cuotas)
+      </mat-card-title>
+    </mat-card-header>
+    <!-- Resumen de Pagos -->
+    <div class="cuotas-summary">
+      <div class="summary-item pagado">
+        <span class="summary-label">Total Pagado:</span>
+        <span class="summary-value">{{ formatMonto(getTotalPagado()) }}</span>
+      </div>
+      <div class="summary-item pendiente">
+        <span class="summary-label">Total Pendiente:</span>
+        <span class="summary-value">{{ formatMonto(getTotalPendiente()) }}</span>
+      </div>
+      <div class="summary-item porcentaje">
+        <span class="summary-label">% Cancelado:</span>
+        <span class="summary-value">{{ getPorcentajePagado() }}%</span>
+      </div>
+    </div>
+    <mat-card-content>
+  <div class="table-container">
+      <table mat-table [dataSource]="data.cuotas" class="cuotas-table">
+        <!-- Columna Número de Cuota -->
+        <ng-container matColumnDef="numeroCuota">
+          <th mat-header-cell *matHeaderCellDef>N° Cuota</th>
+          <td mat-cell *matCellDef="let cuota">{{ cuota.numeroCuota }}</td>
+        </ng-container>
+        <!-- Columna Monto -->
+        <ng-container matColumnDef="montoCuota">
+          <th mat-header-cell *matHeaderCellDef>Monto</th>
+          <td mat-cell *matCellDef="let cuota">{{ formatMonto(cuota.montoCuota) }}</td>
+        </ng-container>
+        <!-- Columna Vencimiento -->
+        <ng-container matColumnDef="fechaVencimiento">
+          <th mat-header-cell *matHeaderCellDef>Vencimiento</th>
+          <td mat-cell *matCellDef="let cuota">
+            {{ cuota.fechaVencimiento | date : 'shortDate' }}
+          </td>
+        </ng-container>
+        <!-- Metodo Pago -->
+        <ng-container matColumnDef="metodoPago">
+          <th mat-header-cell *matHeaderCellDef>Método de Pago</th>
+          <td mat-cell *matCellDef="let cuota">{{ cuota.metodoPago }}</td>
+        </ng-container>
+        <!-- Columna Estado -->
+        <ng-container matColumnDef="estadoCuota">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td
+            mat-cell
+            *matCellDef="let cuota"
+            [ngClass]="'estado-' + cuota.estadoCuota.toLowerCase()"
+          >
+            {{ cuota.estadoCuota }}
+          </td>
+        </ng-container>
+
+        <!-- Acción Pagar -->
+        <!-- <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acción</th>
+          <td mat-cell *matCellDef="let cuota">
+            @if (cuota.estadoCuota === 'PENDIENTE') {
+            <button
+              mat-icon-button
+              color="primary"
+              matTooltip="Pagar cuota"
+              (click)="onPayCuota(cuota)"
+            >
+              <mat-icon>payments</mat-icon>
+            </button>
+            } @else { <mat-icon color="primary">done</mat-icon> }
+          </td>
+        </ng-container> -->
+        
+        <!-- Columna Acción (Cancelar / Pagar + Suspender) -->
+<ng-container matColumnDef="acciones">
+  <th mat-header-cell *matHeaderCellDef class="acciones">Acción</th>
+  <td mat-cell *matCellDef="let cuota" class="acciones">
+    <div class="action-buttons">
+      @if (cuota.estadoCuota === 'PENDIENTE') {
+        <!-- Botón Pagar -->
+        <button mat-icon-button color="accent" 
+                matTooltip="Pagar cuota" 
+                (click)="onPayCuota(cuota)"
+                class="btn-pagar">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <!-- Botón Suspender -->
+        <button mat-icon-button color="warn" 
+                matTooltip="Suspender cuota" 
+                (click)="onSuspendPago3()"
+                class="btn-suspend">
+          <mat-icon>pause_circle</mat-icon>
+        </button>
+      } @else if (cuota.estadoCuota === 'PAGADO') {
+        <span class="text-success" aria-hidden="true">
+          <mat-icon>done</mat-icon>
+        </span>
+      } @else if (cuota.estadoCuota === 'SUSPENDIDO') {
+        <span class="text-suspended" aria-hidden="true" matTooltip="Cuota suspendida">
+          <mat-icon>pause_circle</mat-icon>
+        </span>
+      }
+    </div>
+  </td>
+</ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+  </div>
+    </mat-card-content>
+  </mat-card>
+  } @else if (isPagoCuotas) {
+  <mat-card class="info-message-card">
+    <p class="info-message">No hay información de cuotas disponible.</p>
+  </mat-card>
+  } @else {
+  <mat-card class="info-message-card">
+    <p class="info-message">Este es un pago único sin cuotas.</p>
+  </mat-card>
+  } } @else {
+  <div class="loading">
+    <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+  </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cerrar</button>
+</mat-dialog-actions>

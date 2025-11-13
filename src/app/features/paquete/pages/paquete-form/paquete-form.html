@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Editar Paquete' : 'Nuevo Paquete' }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="flex flex-col gap-3">
+  <mat-form-field appearance="outline">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Descripción</mat-label>
+    <input matInput formControlName="descripcion" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Duración (minutos)</mat-label>
+    <input matInput type="number" formControlName="duracionMinutos" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Precio Total</mat-label>
+    <input matInput type="number" formControlName="precioTotal" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()">
+    {{ isEditing ? 'Actualizar' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>

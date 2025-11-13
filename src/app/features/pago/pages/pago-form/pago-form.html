@@ -1,0 +1,122 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Editar Pago' : 'Nueva Pago' }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="flex flex-col gap-4">
+
+  <!-- <mat-form-field appearance="outline">
+    <mat-label>Cliente</mat-label>
+    <input matInput placeholder="Buscar por nombre o DNI" [(ngModel)]="filtroUsuario" name="filtroUsuario" />
+    <mat-select formControlName="usuarioId">
+
+      @for (usuario of usuariosFiltrados; track $index) {
+        <mat-option [value]="usuario.id">
+          {{ usuario.nombre }} ({{ usuario.numeroDocumento }})
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Paquete</mat-label>
+    <input matInput placeholder="Buscar paquete" [(ngModel)]="filtroPaquete" name="filtroPaquete" />
+    <mat-select formControlName="paqueteId">
+      @for (paquete of paquetesFiltrados; track $index) {
+  <mat-option [value]="paquete.id">
+        {{ paquete.nombre }} - {{ paquete.precioTotal }}
+      </mat-option>
+      }
+    
+    </mat-select>
+  </mat-form-field> -->
+
+   <!-- Usuario -->
+  <mat-form-field appearance="outline">
+    <mat-label>Cliente</mat-label>
+    <input
+      matInput
+      placeholder="Buscar por nombre o DNI"
+      [(ngModel)]="filtroUsuario" 
+      name="filtroUsuario"
+      [ngModelOptions]="{standalone: true}"
+    />
+    <mat-select formControlName="usuarioId">
+      <mat-option *ngFor="let usuario of usuariosFiltrados" [value]="usuario.id">
+        {{ usuario.nombre }} ({{ usuario.numeroDocumento }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Paquete -->
+  <mat-form-field appearance="outline">
+    <mat-label>Paquete</mat-label>
+    <input
+      matInput
+      placeholder="Buscar paquete"
+      [(ngModel)]="filtroPaquete"
+      name="filtroPaquete"
+      [ngModelOptions]="{standalone: true}"
+    />
+    <mat-select formControlName="paqueteId">
+      <mat-option *ngFor="let paquete of paquetesFiltrados" [value]="paquete.id">
+        {{ paquete.nombre }} - {{ paquete.precioTotal | currency:'PEN' }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Monto -->
+  <!-- <mat-form-field appearance="outline">
+    <mat-label>Monto (soles)</mat-label>
+    <input matInput type="number" formControlName="monto" />
+  </mat-form-field>
+ -->
+
+  <!-- Metodos pagos -->
+  <mat-form-field appearance="outline">
+    <mat-label>Metodo de Pago</mat-label>
+    <mat-select formControlName="metodoPago">
+      @for (metodo of metodoPagos; track $index) {
+        <mat-option [value]="metodo">{{ metodo }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <!-- cuotas -->
+  <!-- <mat-form-field appearance="outline">
+    <mat-label>Cuotas</mat-label>
+    <input matInput type="number" formControlName="cuotas" />
+  </mat-form-field>
+
+
+    <!-- montoPrimerPago -->
+  <!-- <mat-form-field appearance="outline">
+    <mat-label>Monto Primer Pago</mat-label>
+    <input matInput type="number" formControlName="montoPrimerPago" />
+  </mat-form-field> -->
+
+ 
+  <mat-slide-toggle formControlName="pagarEnCuotas" class="mt-2">
+    ¿Pagar en cuotas?
+  </mat-slide-toggle>
+
+  <div *ngIf="form.get('pagarEnCuotas')?.value" class="mt-4">
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Número de cuotas</mat-label>
+      <input matInput type="number" formControlName="cuotas">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Monto del primer pago</mat-label>
+      <input matInput type="number" formControlName="montoPrimerPago">
+    </mat-form-field>
+
+  </div>
+
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()">
+    {{ isEditing ? 'Actualizar' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>

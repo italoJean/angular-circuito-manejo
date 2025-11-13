@@ -1,0 +1,13 @@
+<section>
+   <button mat-raised-button (click)="openCreateModal()">Nuevo Usuario</button>
+   
+  <app-grid
+    [displayedColumns]="displayedColumns"
+    [data]="data()"
+    [columnLabels]="columnLabels()"
+    [sortableColumns]="sortables"
+  (edit)="openEditModal($event)"
+    (delete)="deleteUsuario($event)"
+  ></app-grid>
+  
+</section>

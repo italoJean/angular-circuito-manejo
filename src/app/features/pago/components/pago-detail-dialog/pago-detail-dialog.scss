@@ -1,0 +1,281 @@
+.detail-dialog-content {
+  min-width: 550px;
+  max-width: 900px;
+  padding: 16px;
+  max-height: 85vh;
+  overflow-y: auto;
+
+  .info-card {
+    margin-bottom: 20px;
+    border-left: 4px solid #1976d2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    mat-card-header {
+      padding: 16px;
+      background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+      margin: -16px -16px 16px -16px;
+
+      mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1976d2;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+          color: #1976d2;
+        }
+      }
+    }
+
+    mat-card-content {
+      padding: 16px 0;
+    }
+
+    &.usuario-card {
+      border-left-color: #2196f3;
+      mat-card-title {
+        color: #2196f3;
+        mat-icon { color: #2196f3; }
+      }
+    }
+
+    &.paquete-card {
+      border-left-color: #4caf50;
+      mat-card-title {
+        color: #4caf50;
+        mat-icon { color: #4caf50; }
+      }
+    }
+
+    &.pago-card {
+      border-left-color: #ff9800;
+      mat-card-title {
+        color: #ff9800;
+        mat-icon { color: #ff9800; }
+      }
+    }
+
+    &.cuotas-card {
+      border-left-color: #9c27b0;
+      mat-card-title {
+        color: #9c27b0;
+        mat-icon { color: #9c27b0; }
+      }
+    }
+
+    &.info-message-card {
+      border-left-color: #757575;
+      mat-card-content {
+        padding: 16px;
+        text-align: center;
+      }
+    }
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .label {
+      font-weight: 600;
+      color: #666;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .value {
+      color: #333;
+      font-size: 14px;
+      word-break: break-word;
+
+      &.monto {
+        font-weight: 700;
+        color: #2196f3;
+        font-size: 16px;
+      }
+
+      &.estado-pagado {
+        color: #2e7d32;
+        font-weight: 600;
+        background: #e8f5e9;
+        padding: 4px 8px;
+        border-radius: 4px;
+        width: fit-content;
+      }
+
+      &.estado-pendiente {
+        color: #ed6c02;
+        font-weight: 600;
+        background: #fff3e0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        width: fit-content;
+      }
+
+      &.estado-cancelado {
+        color: #d32f2f;
+        font-weight: 600;
+        background: #ffebee;
+        padding: 4px 8px;
+        border-radius: 4px;
+        width: fit-content;
+      }
+    }
+  }
+
+  .cuotas-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      background: #f5f5f5;
+      font-weight: 600;
+      color: #666;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid #ddd;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+
+      &:last-child {
+        text-align: right;
+      }
+
+      &.estado-pagado {
+        color: #2e7d32;
+        font-weight: 500;
+      }
+
+      &.estado-pendiente {
+        color: #ed6c02;
+        font-weight: 500;
+      }
+
+      &.estado-cancelado {
+        color: #d32f2f;
+        font-weight: 500;
+      }
+    }
+
+    tr:hover {
+      background: #f9f9f9;
+    }
+  }
+
+  .info-message {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 24px;
+    margin: 0;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+}
+
+// Scrollbar personalizado
+.detail-dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.detail-dialog-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.detail-dialog-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+
+  &:hover {
+    background: #555;
+  }
+}
+
+
+.cuotas-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    border-radius: 4px;
+    background: white;
+    border-left: 4px solid #999;
+
+    &.pagado {
+      border-left-color: #2e7d32;
+    }
+
+    &.pendiente {
+      border-left-color: #ed6c02;
+    }
+
+    &.porcentaje {
+      border-left-color: #1976d2;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-value {
+      font-size: 18px;
+      font-weight: 700;
+
+      &.pagado {
+        color: #2e7d32;
+      }
+
+      &.pendiente {
+        color: #ed6c02;
+      }
+
+      &.porcentaje {
+        color: #1976d2;
+      }
+    }
+  }
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.cuotas-table {
+  min-width: 700px; /* evita que se comprima demasiado */
+  width: 100%;
+}
