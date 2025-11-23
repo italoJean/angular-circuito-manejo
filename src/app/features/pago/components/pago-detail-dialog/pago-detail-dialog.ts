@@ -230,6 +230,7 @@ onSuspendPago2(): void {
     }
   });
 
+
   dialogRef.afterClosed().subscribe((result) => {
     if (result) {
       // Usuario confirmó

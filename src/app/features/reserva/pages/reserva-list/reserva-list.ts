@@ -27,21 +27,21 @@ export class ReservaList implements OnInit{
 
   // ✅ Columnas a mostrar (usa las relaciones)
   displayedColumns: Array<keyof ReservaResponse | 'action'> = [
-    'id', 'usuario', 'paquete', 'fechaReserva', 'estado', 'action'
+    'id', 'placaVehiculo', 'modeloVehiculo', 'numeroBoleta', 'fechaReserva','minutosReservados', 'estado', 'action'
   ];
 
   // ✅ Columnas ordenables (solo algunas)
   sortables: Array<string> = ['id', 'fechaReserva', 'estado'] as const;
 
   // ✅ Etiquetas de las columnas (Signal)
-  readonly columnLabels = signal<Record<string, string>>({
-    id: 'ID',
-    usuario: 'Usuario',
-    paquete: 'Paquete',
-    fechaReserva: 'Fecha y hora de reserva',
-    estado: 'Estado',
-    action: 'Acción'
-  });
+  // readonly columnLabels = signal<Record<string, string>>({
+  //   id: 'ID',
+  //   usuario: 'Usuario',
+  //   paquete: 'Paquete',
+  //   fechaReserva: 'Fecha y hora de reserva',
+  //   estado: 'Estado',
+  //   action: 'Acción'
+  // });
 
   ngOnInit(): void {
     this.loadReservas();
@@ -71,7 +71,7 @@ export class ReservaList implements OnInit{
     });
   }
 
-  // ✅ Abrir modal de edición
+  // ✅ Abrir modal de edición !!!! MODIFICAR
   openEditModal(reserva: ReservaResponse): void {
     this._modalService.openModal(ReservaForm, reserva).subscribe((editada) => {
       if (editada) {
@@ -81,7 +81,7 @@ export class ReservaList implements OnInit{
     });
   }
 
-  // ✅ Eliminar reserva con confirmación
+  // ✅ Eliminar reserva con confirmación !! MODIFICAR
   deleteReserva(reserva: ReservaResponse): void {
     this._dialogService
       .confirm('Eliminar Reserva', `¿Seguro que deseas eliminar la reserva N°${reserva.id}?`)

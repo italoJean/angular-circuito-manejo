@@ -1,0 +1,55 @@
+<!-- <h2 mat-dialog-title>Seleccionar Fecha y Hora de Reserva</h2>
+    
+    <mat-dialog-content class="calendar-dialog-content">
+      <app-full-calendar (dateSelected)="onDateSelected($event)"></app-full-calendar>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="close()">Cerrar</button>
+      <button mat-raised-button color="primary" 
+              (click)="confirm()" 
+              [disabled]="!selectedDate">
+        Confirmar Selección
+      </button>
+    </mat-dialog-actions> -->
+
+    <h2 mat-dialog-title>
+  <mat-icon>calendar_month</mat-icon>
+  Seleccionar Fecha y Hora de Reserva
+</h2>
+
+<mat-dialog-content class="calendar-dialog-content">
+  <div class="info-box">
+    <p><strong>📋 Horario de Negocio:</strong> 8:00 AM - 6:00 PM</p>
+    <p><strong>🔴 Rojo:</strong> Horarios ocupados (no disponibles)</p>
+    <p><strong>🟢 Verde:</strong> Horarios disponibles para seleccionar</p>
+  </div>
+
+  <!-- Mensaje de validación (si existe) -->
+   @if (!isValidSelection) {
+     <div  class="validation-error-box">
+    <mat-icon>warning</mat-icon>
+    <p>Selecciona un rango de horario válido dentro del horario de negocio</p>
+  </div>
+   }
+ 
+
+  <app-full-calendar 
+    (dateSelected)="onDateSelected($event)"
+    (validationStateChanged)="onValidationStateChanged($event)"
+    [vehiculoId]="vehiculoId">
+  </app-full-calendar>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cerrar</button>
+  
+  <!-- Botón DESHABILITADO hasta que haya selección válida -->
+  <button mat-raised-button color="primary" 
+          (click)="confirm()" 
+          [disabled]="!isValidSelection"
+          [attr.aria-disabled]="!isValidSelection">
+    <mat-icon>check</mat-icon>
+    Confirmar Selección
+  </button>
+</mat-dialog-actions>

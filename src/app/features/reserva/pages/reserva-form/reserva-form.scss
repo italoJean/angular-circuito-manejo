@@ -1,0 +1,41 @@
+.reserva-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .search-field {
+    margin: 8px;
+    width: calc(100% - 16px);
+  }
+}
+
+mat-dialog-content {
+  min-width: 350px;
+}
+
+mat-form-field {
+  display: block;
+}
+
+.fecha-reserva-group {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+
+  .full-width {
+    flex: 1;
+  }
+
+  .calendar-button {
+    white-space: nowrap;
+    min-width: 200px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+}
