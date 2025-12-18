@@ -1,1 +1,13 @@
-<full-calendar [options]="calendarOptions"></full-calendar>
+<div class="calendar-container">
+    
+    <div class="validation-status">
+        <p [ngClass]="{'valid-message': isValidSelection, 'invalid-message': !isValidSelection}">
+            {{ validationMessage }}
+        </p>
+    </div>
+
+    <full-calendar 
+        #calendar
+        [options]="calendarOptions">
+    </full-calendar>
+</div>

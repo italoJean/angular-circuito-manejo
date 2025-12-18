@@ -1,0 +1,134 @@
+.calendar-dialog {
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 20px;
+
+    mat-icon {
+      color: #1976d2;
+      font-size: 26px;
+      padding-right: 10px;
+    }
+  }
+
+  &__content {
+    min-height: 550px;
+    padding: 16px;
+    position: relative;
+  }
+
+  /* --------------------------
+     LOADING STATE
+  ---------------------------*/
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+
+    mat-spinner {
+      margin-bottom: 12px;
+    }
+  }
+
+  &__loading-text {
+    font-size: 15px;
+    color: #616161;
+  }
+
+  /* --------------------------
+     INFO BOX
+  ---------------------------*/
+  &__info {
+    background-color: #e8f3fe;
+    border-left: 4px solid #2196f3;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+
+    p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #0d47a1;
+
+      strong {
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* --------------------------
+     VALIDATION STATE
+  ---------------------------*/
+  &__validation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border-left: 4px solid;
+    transition: 0.25s ease;
+
+    mat-icon {
+      flex-shrink: 0;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    &--error {
+      background-color: #ffebee;
+      border-color: #f44336;
+
+      mat-icon {
+        color: #f44336;
+      }
+
+      p {
+        color: #c62828;
+      }
+    }
+
+    &--success {
+      background-color: #e8f5e9;
+      border-color: #43a047;
+
+      mat-icon {
+        color: #43a047;
+      }
+
+      p {
+        color: #2e7d32;
+      }
+    }
+  }
+
+  /* --------------------------
+     ACTION BUTTONS
+  ---------------------------*/
+  &__actions {
+    button[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    button:not([disabled]):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+    }
+  }
+
+  &__confirm {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

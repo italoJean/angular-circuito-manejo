@@ -1,281 +1,380 @@
-.detail-dialog-content {
-  min-width: 550px;
-  max-width: 900px;
-  padding: 16px;
-  max-height: 85vh;
-  overflow-y: auto;
+.dialog-title {
+  /* Estilo del título principal del diálogo */
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
+  font-size: 22px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  color: #3f51b5;
+
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.dialog-title__icon {
+/* Icono principal del título */
+  font-size: 50px;
+  color: #52576e;
+  padding-left: 15px;
+}
+
+.detail-dialog-content {
+/* Contenedor principal del contenido del diálogo (scroll, tamaño y fondo) */
+  min-width: 560px;
+  max-width: 950px;
+  padding: 20px;
+  max-height: 75vh;
+  overflow-y: auto;
+  background: #fafafa;
+
+/* Tarjetas base de información (usuario, pago, paquete, cuotas) */
   .info-card {
-    margin-bottom: 20px;
-    border-left: 4px solid #1976d2;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Estilos base de las tarjetas (sombra, bordes, borde lateral izquierdo) */
+    margin-bottom: 22px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background: white;
+    border-left: 5px solid #2196f3;
 
     mat-card-header {
-      padding: 16px;
-      background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
-      margin: -16px -16px 16px -16px;
+      /* Estilo del encabezado de la tarjeta (fondo, padding, separador) */
+      padding: 18px 16px;
+      background: linear-gradient(135deg, #ffffff, #f0f4ff);
+      border-bottom: 1px solid #e2e2e2;
 
       mat-card-title {
+        /* Título dentro de la tarjeta (icono y texto) */
         display: flex;
         align-items: center;
         gap: 12px;
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
+        font-size: 17px;
+        letter-spacing: 0.5px;  
+        font-weight: 700;
         color: #1976d2;
 
         mat-icon {
-          font-size: 24px;
-          width: 24px;
-          height: 24px;
-          color: #1976d2;
+          /* Ajuste del icono dentro del título de la tarjeta */
+          font-size: 26px;
+          width: 26px;
+          height: 26px;
+          color: inherit;
         }
       }
     }
 
     mat-card-content {
-      padding: 16px 0;
-    }
-
-    &.usuario-card {
-      border-left-color: #2196f3;
-      mat-card-title {
-        color: #2196f3;
-        mat-icon { color: #2196f3; }
-      }
-    }
-
-    &.paquete-card {
-      border-left-color: #4caf50;
-      mat-card-title {
-        color: #4caf50;
-        mat-icon { color: #4caf50; }
-      }
-    }
-
-    &.pago-card {
-      border-left-color: #ff9800;
-      mat-card-title {
-        color: #ff9800;
-        mat-icon { color: #ff9800; }
-      }
-    }
-
-    &.cuotas-card {
-      border-left-color: #9c27b0;
-      mat-card-title {
-        color: #9c27b0;
-        mat-icon { color: #9c27b0; }
-      }
-    }
-
-    &.info-message-card {
-      border-left-color: #757575;
-      mat-card-content {
-        padding: 16px;
-        text-align: center;
-      }
+      /* Contenido principal de la tarjeta */
+      padding: 18px;
     }
   }
 
+/* Colores dinámicos para los bordes izquierdos de las tarjetas */
+  .usuario-card   { border-left-color: #2196f3; }
+  .paquete-card   { border-left-color: #4caf50; }
+  .pago-card      { border-left-color: #ff9800; }
+  .cuotas-card    { border-left-color: #9c27b0; }
+
+/* Grilla responsiva para mostrar la información en columnas */
   .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
   }
 
+  /* Elemento individual dentro de la grilla (label + value) */
   .info-item {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
 
     .label {
-      font-weight: 600;
-      color: #666;
+      /* Estilo de las etiquetas (uppercase, gris) */
       font-size: 12px;
+      font-weight: 600;
+      color: #6e6e6e;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
 
     .value {
+      /* Estilo de los valores */
+      font-size: 15px;
       color: #333;
-      font-size: 14px;
-      word-break: break-word;
 
       &.monto {
+        /* Estilo especial para los montos de dinero */
         font-weight: 700;
-        color: #2196f3;
-        font-size: 16px;
-      }
-
-      &.estado-pagado {
-        color: #2e7d32;
-        font-weight: 600;
-        background: #e8f5e9;
-        padding: 4px 8px;
-        border-radius: 4px;
-        width: fit-content;
-      }
-
-      &.estado-pendiente {
-        color: #ed6c02;
-        font-weight: 600;
-        background: #fff3e0;
-        padding: 4px 8px;
-        border-radius: 4px;
-        width: fit-content;
-      }
-
-      &.estado-cancelado {
-        color: #d32f2f;
-        font-weight: 600;
-        background: #ffebee;
-        padding: 4px 8px;
-        border-radius: 4px;
-        width: fit-content;
-      }
-    }
-  }
-
-  .cuotas-table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th {
-      background: #f5f5f5;
-      font-weight: 600;
-      color: #666;
-      padding: 12px;
-      text-align: left;
-      border-bottom: 2px solid #ddd;
-    }
-
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-
-      &:last-child {
-        text-align: right;
-      }
-
-      &.estado-pagado {
-        color: #2e7d32;
-        font-weight: 500;
-      }
-
-      &.estado-pendiente {
-        color: #ed6c02;
-        font-weight: 500;
-      }
-
-      &.estado-cancelado {
-        color: #d32f2f;
-        font-weight: 500;
-      }
-    }
-
-    tr:hover {
-      background: #f9f9f9;
-    }
-  }
-
-  .info-message {
-    text-align: center;
-    color: #999;
-    font-style: italic;
-    padding: 24px;
-    margin: 0;
-  }
-
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 200px;
-  }
-}
-
-// Scrollbar personalizado
-.detail-dialog-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.detail-dialog-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.detail-dialog-content::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-
-  &:hover {
-    background: #555;
-  }
-}
-
-
-.cuotas-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  padding: 16px;
-  background: #f9f9f9;
-  border-bottom: 1px solid #eee;
-
-  .summary-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 12px;
-    border-radius: 4px;
-    background: white;
-    border-left: 4px solid #999;
-
-    &.pagado {
-      border-left-color: #2e7d32;
-    }
-
-    &.pendiente {
-      border-left-color: #ed6c02;
-    }
-
-    &.porcentaje {
-      border-left-color: #1976d2;
-    }
-
-    .summary-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .summary-value {
-      font-size: 18px;
-      font-weight: 700;
-
-      &.pagado {
-        color: #2e7d32;
-      }
-
-      &.pendiente {
-        color: #ed6c02;
-      }
-
-      &.porcentaje {
+        font-size: 17px;
         color: #1976d2;
       }
     }
   }
+
+/* Colores Dinámicos de Estado (Integrados y Optimizados) */
+  .estado-pagado {
+    color: #1b5e20;
+    background: #e8f5e9;
+    padding: 3px 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  .estado-pendiente {
+    color: #e65100;
+    background: #fff3e0;
+    padding: 3px 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  .estado-cancelado {
+    color: #b71c1c;
+    background: #ffebee;
+    padding: 3px 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  .estado-finalizado {
+    color: #1e086f;
+    background: #ffebee;
+    padding: 3px 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  /* Resumen de cuotas */
+  .cuotas-summary {
+    /* Contenedor del resumen de pagos (grid, fondo gris) */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    padding: 18px;
+    gap: 15px;
+    background: #f4f4f4;
+    border-bottom: 1px solid #e0e0e0;
+
+    .summary-item {
+      /* Elemento individual del resumen de cuotas */
+      background: white;
+      padding: 14px;
+      border-radius: 10px;
+      border-left: 5px solid #ccc;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
+      /* Colores de borde específicos para el resumen */
+      &.pagado { border-left-color: #43a047; }
+      &.pendiente { border-left-color: #fb8c00; }
+      &.porcentaje { border-left-color: #1976d2; }
+
+      .summary-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #666;
+      }
+
+      .summary-value {
+        font-size: 18px;
+        font-weight: 700;
+      }
+    }
+  }
+
+  /* Tabla de cuotas */
+  .table-container {
+    /* Contenedor responsivo para la tabla */
+    overflow-x: auto;
+    border-radius: 10px;
+  }
+
+  .cuotas-table {
+    /* Estilo base de la tabla de cuotas */
+    width: 100%;
+    min-width: 720px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+
+    th {
+      /* Encabezados de la tabla (fondo azul claro) */
+      background: #eef2ff;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #424242;
+      border-bottom: 2px solid #d1d5db;
+    }
+
+    td {
+      /* Celdas de la tabla */
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+
+      /* Estilos específicos para celdas de estado dentro de la tabla */
+      &.estado-pagado { color: #2e7d32; font-weight: 600; }
+      &.estado-pendiente { color: #ed6c02; font-weight: 600; }
+      &.estado-suspendido { color: #b71c1c; font-weight: 600; }
+    }
+
+    tr:hover {
+      /* Efecto hover en las filas */
+      background: #f9f9f9;
+      transition: 0.2s ease-in-out;
+    }
+  }
+
+/* Botones de acciones en la tabla de cuotas */
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+
+    button {
+      /* Animación de zoom al pasar el ratón */
+      transform: scale(1);
+      transition: transform 0.15s;
+
+      &:hover {
+        transform: scale(1.15);
+      }
+    }
+  }
+
 }
 
-.table-container {
-  width: 100%;
-  overflow-x: auto;
+/* Scroll personalizado para el contenido del diálogo */
+.detail-dialog-content::-webkit-scrollbar {
+  width: 8px;
 }
 
-.cuotas-table {
-  min-width: 700px; /* evita que se comprima demasiado */
-  width: 100%;
+.detail-dialog-content::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 4px;
+
+  &:hover { background: #9e9e9e; }
+}
+
+
+/*  RESPONSIVE MODAL (Ajustes para móviles) */
+@media (max-width: 600px) {
+  /* Elimina el min-width y fuerza el 100% en dispositivos pequeños */
+  .detail-dialog-content {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px !important;
+    border-radius: 0 !important;
+  }
+
+  /* Ajusta el contenedor del diálogo */
+  mat-dialog-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Grillas a una sola columna */
+  .info-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cuotas-summary {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Asegura scroll en la tabla si es muy ancha */
+  .table-container {
+    overflow-x: auto;
+  }
+
+  /* Reduce padding y fuente de la tabla en móvil */
+  table.cuotas-table th,
+  table.cuotas-table td {
+    padding: 10px 6px !important;
+    font-size: 13px !important;
+  }
+
+  /* Reduce fuente del título de tarjeta */
+  mat-card-title {
+    font-size: 15px !important;
+  }
+}
+
+
+/* Íconos de acciones con color personalizado */
+.btn-pagar mat-icon {
+  color: #2e7d32 !important; 
+}
+
+.btn-suspend mat-icon {
+  color: #d32f2f !important; 
+}
+
+.action-buttons button:hover mat-icon {
+  filter: brightness(1.2);
+}
+
+
+
+/* Colores de íconos de las tarjetas (colores específicos) */
+.usuario-card mat-card-title mat-icon {
+  color: #1976d2 !important;
+}
+
+.paquete-card mat-card-title mat-icon {
+  color: #4caf50 !important;
+}
+
+.pago-card mat-card-title mat-icon {
+  color: #ff9800 !important;
+}
+
+.cuotas-card mat-card-title mat-icon {
+  color: #9c27b0 !important;
+}
+
+
+
+/* Estilo para el mensaje de Pago Único (similar al input del usuario) */
+.single-payment-message {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  margin-bottom: 22px; 
+  border-radius: 12px;
+  background-color: #fce4ec;
+  border: 1px solid #f8bbd0; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.icon-payment {
+  /* Ícono dentro del mensaje de pago único */
+  color: #e91e63; 
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.info-message-text {
+  /* Texto dentro del mensaje de pago único */
+  margin: 0;
+  font-size: 16px;
+  color: #880e4f;
+  font-weight: 500;
+}
+
+
+/* Sección de acciones del diálogo */
+mat-dialog-actions {
+  /* Añadir una línea separadora en la parte superior */
+  border-top: 2px solid #e0e0e0;
+  
 }

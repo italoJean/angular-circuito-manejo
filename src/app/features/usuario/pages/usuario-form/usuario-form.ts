@@ -1,16 +1,14 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogActions } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from '../../model/usuario.model';
-import { MaterialModule } from "../../../../shared/ui/material-module";
 import { TipoDocumentoEnum } from '../../enums/tipo-documento.enum';
-import { EstadoVehiculosEnum } from '../../../vehiculo/enums/estado-vehiculo.enum';
-import { MatSelectModule } from '@angular/material/select';
+import { MaterialModule } from "../../../../shared/ui/material-module";
 
 @Component({
   selector: 'app-usuario-form',
-  imports: [ReactiveFormsModule, MaterialModule, MatDialogActions,MatSelectModule,FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, MaterialModule],
   templateUrl: './usuario-form.html',
   styleUrl: './usuario-form.scss',
 })
@@ -24,7 +22,6 @@ export class UsuarioForm implements OnInit {
 
   
     public readonly tipoDocumentos = Object.values(TipoDocumentoEnum);
-    // public readonly estados = Object.values(EstadoVehiculosEnum);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data?: Usuario
@@ -38,8 +35,7 @@ export class UsuarioForm implements OnInit {
       tipoDocumento: [this.data?.tipoDocumento || '', Validators.required],
       numeroDocumento: [this.data?.numeroDocumento || '', Validators.required],
       telefono: [this.data?.telefono || '', Validators.required],
-      email: [this.data?.email || '', Validators.required],
-      // fechaRegistro: [this.data?.fechaRegistro || '', Validators.required],
+      email: [this.data?.email || '', Validators.required]
     });
 
     this.isEditing = !!this.data;

@@ -1,42 +1,22 @@
-<h2 mat-dialog-title>{{ isEditing ? 'Editar Pago' : 'Nueva Pago' }}</h2>
+<h2 mat-dialog-title class="modal__header">
+  <mat-icon class="modal__header-icon">payments</mat-icon>
+  {{ isEditing ? 'Editar Pago' : 'Nuevo Pago' }}
+</h2>
 
-<mat-dialog-content [formGroup]="form" class="flex flex-col gap-4">
+<mat-dialog-content [formGroup]="form" class="modal__body form">
+  
+  <!-- Usuario -->
+  <div class="form__section-title">Datos del Cliente</div>
 
-  <!-- <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" class="form__field form__field--select-search">
     <mat-label>Cliente</mat-label>
-    <input matInput placeholder="Buscar por nombre o DNI" [(ngModel)]="filtroUsuario" name="filtroUsuario" />
-    <mat-select formControlName="usuarioId">
-
-      @for (usuario of usuariosFiltrados; track $index) {
-        <mat-option [value]="usuario.id">
-          {{ usuario.nombre }} ({{ usuario.numeroDocumento }})
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Paquete</mat-label>
-    <input matInput placeholder="Buscar paquete" [(ngModel)]="filtroPaquete" name="filtroPaquete" />
-    <mat-select formControlName="paqueteId">
-      @for (paquete of paquetesFiltrados; track $index) {
-  <mat-option [value]="paquete.id">
-        {{ paquete.nombre }} - {{ paquete.precioTotal }}
-      </mat-option>
-      }
-    
-    </mat-select>
-  </mat-form-field> -->
-
-   <!-- Usuario -->
-  <mat-form-field appearance="outline">
-    <mat-label>Cliente</mat-label>
+    <mat-icon matPrefix class="form__icon">person</mat-icon>
     <input
       matInput
       placeholder="Buscar por nombre o DNI"
-      [(ngModel)]="filtroUsuario" 
+      [(ngModel)]="filtroUsuario"
       name="filtroUsuario"
-      [ngModelOptions]="{standalone: true}"
+      [ngModelOptions]="{ standalone: true }"
     />
     <mat-select formControlName="usuarioId">
       <mat-option *ngFor="let usuario of usuariosFiltrados" [value]="usuario.id">
@@ -46,77 +26,61 @@
   </mat-form-field>
 
   <!-- Paquete -->
-  <mat-form-field appearance="outline">
+  <div class="form__section-title">Paquete Seleccionado</div>
+
+  <mat-form-field appearance="outline" class="form__field form__field--select-search">
     <mat-label>Paquete</mat-label>
+    <mat-icon matPrefix class="form__icon">shopping_bag</mat-icon>
     <input
       matInput
       placeholder="Buscar paquete"
       [(ngModel)]="filtroPaquete"
       name="filtroPaquete"
-      [ngModelOptions]="{standalone: true}"
+      [ngModelOptions]="{ standalone: true }"
     />
     <mat-select formControlName="paqueteId">
       <mat-option *ngFor="let paquete of paquetesFiltrados" [value]="paquete.id">
-        {{ paquete.nombre }} - {{ paquete.precioTotal | currency:'PEN' }}
+        {{ paquete.nombre }} - {{ paquete.precioTotal | currency : 'PEN' }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <!-- Monto -->
-  <!-- <mat-form-field appearance="outline">
-    <mat-label>Monto (soles)</mat-label>
-    <input matInput type="number" formControlName="monto" />
-  </mat-form-field>
- -->
+  <!-- Metodo Pago -->
+  <div class="form__section-title">Método de Pago</div>
 
-  <!-- Metodos pagos -->
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" class="form__field form__field--select">
     <mat-label>Metodo de Pago</mat-label>
+    <mat-icon matPrefix class="form__icon">credit_card</mat-icon>
     <mat-select formControlName="metodoPago">
       @for (metodo of metodoPagos; track $index) {
-        <mat-option [value]="metodo">{{ metodo }}</mat-option>
+      <mat-option [value]="metodo">{{ metodo }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
 
-  <!-- cuotas -->
-  <!-- <mat-form-field appearance="outline">
-    <mat-label>Cuotas</mat-label>
-    <input matInput type="number" formControlName="cuotas" />
-  </mat-form-field>
-
-
-    <!-- montoPrimerPago -->
-  <!-- <mat-form-field appearance="outline">
-    <mat-label>Monto Primer Pago</mat-label>
-    <input matInput type="number" formControlName="montoPrimerPago" />
-  </mat-form-field> -->
-
- 
-  <mat-slide-toggle formControlName="pagarEnCuotas" class="mt-2">
+  <mat-slide-toggle formControlName="pagarEnCuotas" class="form__toggle-cuotas" color="primary">
     ¿Pagar en cuotas?
   </mat-slide-toggle>
 
-  <div *ngIf="form.get('pagarEnCuotas')?.value" class="mt-4">
-
-    <mat-form-field appearance="outline" class="w-full">
+  <div *ngIf="form.get('pagarEnCuotas')?.value" class="form__cuotas-box form__cuotas-box--fade">
+    <mat-form-field appearance="outline" class="form__field">
       <mat-label>Número de cuotas</mat-label>
-      <input matInput type="number" formControlName="cuotas">
+      <mat-icon matPrefix class="form__icon">splitscreen</mat-icon>
+      <input matInput type="number" formControlName="cuotas" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="w-full">
+    <mat-form-field appearance="outline" class="form__field">
       <mat-label>Monto del primer pago</mat-label>
-      <input matInput type="number" formControlName="montoPrimerPago">
+      <mat-icon matPrefix class="form__icon">attach_money</mat-icon>
+      <input matInput type="number" formControlName="montoPrimerPago" />
     </mat-form-field>
-
   </div>
-
 </mat-dialog-content>
 
-
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" class="modal__actions">
   <button mat-button (click)="close()">Cancelar</button>
   <button mat-flat-button color="primary" (click)="save()">
+    <mat-icon>save</mat-icon>
     {{ isEditing ? 'Actualizar' : 'Guardar' }}
   </button>
 </mat-dialog-actions>

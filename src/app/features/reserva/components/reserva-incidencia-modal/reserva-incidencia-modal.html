@@ -1,0 +1,47 @@
+<h2 mat-dialog-title class="incidencia-form__header">
+    <mat-icon class="incidencia-form__icon--warn">warning_amber</mat-icon>
+    Registrar Incidencia (Reserva #{{ reservaId }})
+</h2>
+
+<mat-dialog-content class="incidencia-form__content" [formGroup]="form">
+
+    <mat-form-field appearance="outline" class="incidencia-form__field">
+        <mat-icon matPrefix>edit_note</mat-icon>
+        <mat-label>Detalle de la Incidencia</mat-label>
+        
+        <textarea 
+            matInput 
+            formControlName="detalle" 
+            placeholder="Ej: El cliente tuvo que salir por emergencia de salud."
+            rows="5"
+            cols="50"
+            maxlength="250"></textarea>
+
+        <mat-hint align="end">{{ 250 - form.get('detalle')?.value.length || 0 }} / 250</mat-hint>
+        
+        <mat-error *ngIf="form.get('detalle')?.hasError('required')">
+            El detalle es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.get('detalle')?.hasError('minlength')">
+            Mínimo 10 caracteres.
+        </mat-error>
+    </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="incidencia-form__actions">
+    <button mat-button (click)="close()" class="incidencia-form__button">
+        <mat-icon>close</mat-icon>
+        Cancelar
+    </button>
+
+    <button 
+        mat-raised-button 
+        [disabled]="form.invalid" 
+        (click)="save()"
+        class="incidencia-form__button--primary"
+    >
+        <mat-icon>report_problem</mat-icon>
+        Registrar
+    </button>
+</mat-dialog-actions>

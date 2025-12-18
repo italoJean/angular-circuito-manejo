@@ -1,43 +1,56 @@
-<h2 mat-dialog-title>
-  <mat-icon color="warn">warning</mat-icon>
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">pause_circle</mat-icon>
   Suspender Pago
 </h2>
 
 <mat-dialog-content>
   <div class="suspend-dialog-content">
+
+    <!-- Mensaje Principal -->
     <p class="main-message">
-      ¿Deseas suspender el pago <strong>#{{ data.numeroBoleta }}</strong>?
+      ¿Deseas suspender el pago 
+      <strong>#{{ data.numeroBoleta }}</strong>?
     </p>
 
-    <div class="details">
-      <div class="detail-item">
-        <span class="label">Monto Total:</span>
-        <span class="value">{{ formatMonto(data.monto) }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Tipo de Pago:</span>
-        <span class="value">{{ data.tipoPago }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Cuotas Pendientes:</span>
-        <span class="value">{{ data.pendientes }}</span>
-      </div>
-    </div>
+    <!-- Tarjeta de Detalles -->
+    <mat-card class="details-card">
+      <mat-card-content class="details">
+        <div class="detail-item">
+          <span class="label">Monto Total:</span>
+          <span class="value">{{ formatMonto(data.monto) }}</span>
+        </div>
 
+        <div class="detail-item">
+          <span class="label">Tipo de Pago:</span>
+          <span class="value">{{ data.tipoPago }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Cuotas Pendientes:</span>
+          <span class="value">{{ data.pendientes }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Advertencia -->
     <div class="warning-box">
-      <mat-icon>info</mat-icon>
+      <mat-icon>warning</mat-icon>
       <p>
-        Esta acción aplicará a <strong>todas las cuotas pendientes</strong> asociadas a este pago.
-        Las cuotas ya pagadas no serán afectadas.
+        Esta acción afectará <strong>todas las cuotas pendientes</strong> 
+        asociadas a este pago. Las cuotas ya pagadas no serán modificadas.
       </p>
     </div>
+
   </div>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="cancelar()">Cancelar</button>
-  <button mat-raised-button color="warn" (click)="confirmar()">
-    <mat-icon>pause_circle</mat-icon>
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-stroked-button (click)="cancelar()">
+    Cancelar
+  </button>
+
+  <button mat-raised-button color="warn" (click)="confirmar()" class="btn-suspender">
+    <mat-icon >pause_circle</mat-icon>
     Suspender Pago
   </button>
 </mat-dialog-actions>

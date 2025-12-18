@@ -1,28 +1,73 @@
-.example-card {
-  max-width: 400px;
+/*    CONTENEDOR DE MÓDULOS   */
+.modules-grid {
+    padding: 16px; 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 }
 
-.example-card-footer {
-  padding: 16px;
+/*      MÓDULO-CARD      */
+.module-card {
+    max-width: 400px;
+    padding: 16px; 
+    border-radius: 12px;
+    transition: all 0.25s ease; /* Mejor transición para todas las propiedades */
+    border: 1px solid #ddd; /* Borde más suave */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra inicial muy sutil */
+    
+    &:hover {
+        background: #f7f8ff;
+        cursor: pointer;
+        /* Efecto de elevación más notable */
+        transform: translateY(-6px); 
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
 }
 
-.container{
-  padding: 2px;
+/*    MÓDULO CONTENIDO     */
+.module-card__header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
 }
 
-.responsive-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
+.module-card__icon {
+    font-size: 32px;
+    color: #3f51b5;
+    padding-right: 8px;
+    padding-bottom: 8px;
 }
 
-mat-card:hover {
-  background-color: var(--mat-sys-on-primary);
-  cursor: pointer;
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+.module-card__title {
+    font-size: 22px; 
+    font-weight: 700;
+    color: #3f51b5; 
+    margin: 0; 
 }
 
-mat-card-content{
-  flex-grow: 1;
+/* Contenido */
+.module-card__content {
+     padding: 0 0 10px 0; /* Ajustar padding si es necesario */
+}
+
+.module-card__description {
+    color: #444;
+    font-size: 15px; /* Ligeramente más grande para lectura */
+    line-height: 1.5;
+    min-height: 50px;
+    margin-bottom: 12px;
+}
+
+
+/* Footer */
+.module-card__footer {
+    padding: 10px 0 0 0;
+    border-top: 1px solid #f0f0f0; /* Separador sutil */
+}
+
+.module-card__chip {
+    background: #e8e8ff; 
+    color: #3f51b5; 
+    font-weight: 500;
 }

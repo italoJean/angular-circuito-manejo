@@ -12,33 +12,45 @@ import { CommonModule } from '@angular/common';
 export class Home {
 
   modules =[
-    {
-      Title:'Pagos',
-      description:'This is the module for Admins',
-      traits: ['charming','graceful','sassy'],
-      route:'/dashboard/pago/pagos',
-    },{
-      Title:'Vehiculos',
-      description:'This is the module for Users',
-      traits: ['fluffy','alert','intelligent'],
-      route:'/dashboard/vehiculo/vehiculos',
-    },{
-      Title:'Paquetes',
-      description:'This is the module for Viewers',
-      traits: ['charming','graceful','sassy'],
-      route:'/dashboard/paquete/paquetes',
+     {
+      Title: 'Pagos',
+      description:
+        'Gestiona pagos, cuotas, métodos de pago y el historial financiero de los clientes.',
+      traits: ['Pagos', 'Cuotas', 'Métodos'],
+      route: '/dashboard/pago/pagos',
+      icon: 'payments'
     },
     {
-      Title:'Usuarios',
-      description:'This is the module for Editors',
-      traits: ['charming','graceful','sassy'],
-      route:'/dashboard/usuario/usuarios',
+      Title: 'Vehículos',
+      description:
+        'Administra los vehículos, su disponibilidad, mantenimiento y asignación.',
+      traits: ['Automóvil', 'Control', 'Estado'],
+      route: '/dashboard/vehiculo/vehiculos',
+      icon: 'directions_car'
     },
     {
-      Title:'Reservas',
-      description:'This is the module for Cars',
-      traits: ['charming','graceful','sassy'],
-      route:'/dashboard/reserva/reservas',
+      Title: 'Paquetes',
+      description:
+        'Crea y administra paquetes de clases, precios, duración y configuraciones.',
+      traits: ['Clases', 'Duración', 'Precios'],
+      route: '/dashboard/paquete/paquetes',
+      icon: 'inventory_2'
+    },
+    {
+      Title: 'Clientes',
+      description:
+        'Registro y gestión de clientes, datos personales y control de acceso.',
+      traits: ['Registro', 'Control', 'Datos'],
+      route: '/dashboard/usuario/usuarios',
+      icon: 'people'
+    },
+    {
+      Title: 'Reservas',
+      description:
+        'Gestión de reservas, disponibilidad de instructores y uso de horas.',
+      traits: ['Horarios', 'Clases', 'Instructores'],
+      route: '/dashboard/reserva/reservas',
+      icon: 'event'
     },
     {
       Title:'Articles',

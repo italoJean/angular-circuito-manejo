@@ -1,46 +1,61 @@
-<h2 mat-dialog-title>{{ isEditing ? 'Editar Vehículo' : 'Nuevo Vehículo' }}</h2>
+<h2 mat-dialog-title class="modal__header">
+  <mat-icon class="modal__header-icon">directions_car</mat-icon>
+  {{ isEditing ? 'Editar Vehículo' : 'Nuevo Vehículo' }}
+</h2>
 
-<mat-dialog-content [formGroup]="form" class="flex flex-col gap-3">
-  <mat-form-field appearance="outline">
-    <mat-label>Placa</mat-label>
-    <input matInput formControlName="placa" />
-  </mat-form-field>
+<mat-dialog-content [formGroup]="form" class="modal__body form">
 
-  <mat-form-field appearance="outline">
-    <mat-label>Marca</mat-label>
-    <input matInput formControlName="marca" />
-  </mat-form-field>
+    <div class="form__section-title">Placa</div>
+    <mat-form-field appearance="outline" class="form__field">
+      <mat-label>Placa</mat-label>
+      <mat-icon matPrefix class="form__icon">numbers</mat-icon>
+      <input matInput formControlName="placa" />
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Modelo</mat-label>
-    <input matInput formControlName="modelo" />
-  </mat-form-field>
+    <div class="form__section-title">Marca</div>
+    <mat-form-field appearance="outline" class="form__field">
+      <mat-label>Marca</mat-label>
+      <mat-icon matPrefix class="form__icon">branding_watermark</mat-icon>
+      <input matInput formControlName="marca" />
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Tipo Transmisión</mat-label>
-    <mat-select formControlName="tipoTransmision">
-      @for (tipo of tiposTransmision; track $index) {
-        <mat-option [value]="tipo">{{ tipo }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+    <div class="form__section-title">Modelo</div>
+    <mat-form-field appearance="outline" class="form__field">
+      <mat-label>Modelo</mat-label>
+      <mat-icon matPrefix class="form__icon">model_training</mat-icon>
+      <input matInput formControlName="modelo" />
+    </mat-form-field>
+
+    <div class="form__section-title">Tipo Transmisión</div>
+    <mat-form-field appearance="outline" class="form__field form__field--select">
+      <mat-label>Tipo Transmisión</mat-label>
+      <mat-icon matPrefix class="form__icon">settings</mat-icon>
+      <mat-select formControlName="tipoTransmision">
+        @for (tipo of tiposTransmision; track $index) {
+          <mat-option  [value]="tipo">{{ tipo }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
   @if (isEditing) {
-  <mat-form-field appearance="outline">
-    <mat-label>Estado</mat-label>
-    <mat-select formControlName="estado">
-      @for (estado of estadoVehiculos; track $index) {
-        <mat-option [value]="estado">{{ estado }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-}
+    <div class="form__section-title">Estado</div>
+    <mat-form-field appearance="outline" class="form__field form__field--select">
+      <mat-label>Estado</mat-label>
+      <mat-icon matPrefix class="form__icon">traffic</mat-icon>
+      <mat-select formControlName="estado">
+        @for (estado of estadoVehiculos; track $index) {
+          <mat-option [value]="estado">{{ estado }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
   
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" class="modal__actions">
   <button mat-button (click)="close()">Cancelar</button>
-  <button mat-flat-button color="primary" (click)="save()">
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid">
+              <mat-icon>save</mat-icon>
     {{ isEditing ? 'Actualizar' : 'Guardar' }}
   </button>
 </mat-dialog-actions>

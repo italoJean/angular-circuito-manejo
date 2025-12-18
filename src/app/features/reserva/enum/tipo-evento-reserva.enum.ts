@@ -1,0 +1,6 @@
+export enum TipoEventoReservaEnum{
+    RESERVA='RESERVA',
+    INCIDENCIA='INCIDENCIA',
+    CANCELADO= 'CANCELADO',
+    REPROGRAMADA='REPROGRAMADA'
+}

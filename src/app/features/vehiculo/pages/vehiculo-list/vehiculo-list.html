@@ -1,13 +1,22 @@
-<section>
-   <button mat-raised-button (click)="openCreateModal()">Nuevo Vehiculo</button>
-   
-  <app-grid
-    [displayedColumns]="displayedColumns"
-    [data]="data()"
-    [columnLabels]="columnLabels()"
-    [sortableColumns]="sortables"
-  (edit)="openEditModal($event)"
-    (delete)="deleteVehiculo($event)"
-  ></app-grid>
-  
+<section class="vehiculo-management">
+
+  <div class="vehiculo-management__header">
+    <h2 class="vehiculo-management__title">Gestión de Vehículos</h2>
+
+    <button mat-raised-button color="primary" class="vehiculo-management__button-add"
+      (click)="openCreateModal()">
+      <mat-icon>add_circle</mat-icon>
+      Nuevo Vehículo
+    </button>
+  </div>
+
+      <app-grid
+      [displayedColumns]="displayedColumns"
+      [data]="data()"
+      [columnLabels]="columnLabels()"
+      [sortableColumns]="sortables"
+      (edit)="openEditModal($event)"
+      (delete)="deleteVehiculo($event)"
+    ></app-grid>
+
 </section>

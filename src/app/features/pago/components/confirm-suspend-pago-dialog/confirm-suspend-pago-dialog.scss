@@ -1,63 +1,180 @@
+/* TÍTULO DEL DIÁLOGO (mat-dialog-title) */
+.dialog-title {
+  /* Estilos del contenedor del título (flexbox, fuente, color rojo) */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-size: 22px;
+  font-weight: 700;
+  color: #d32f2f;
+
+  padding: 12px 14px;
+  margin: 0;
+  border-bottom: 2px solid #e0e0e0; /* Línea separadora inferior */
+
+  .title-icon {
+    /* Estilo del icono dentro del título */
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+    color: #d32f2f;
+  }
+}
+
+/* CONTENIDO PRINCIPAL DEL DIÁLOGO (mat-dialog-content) */
 .suspend-dialog-content {
-  padding: 16px 0;
+  /* Padding y animación de entrada sutil */
+  padding: 10px 0;
+  animation: fadeDown 0.25s ease-out;
 
   .main-message {
-    font-size: 16px;
+    /* Mensaje de confirmación principal */
+    font-size: 17px;
     font-weight: 500;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     color: #333;
   }
 
-  .details {
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
+  /* TARJETA DE DETALLES (mat-card) */
+  .details-card {
+    /* Estilo de la tarjeta de información resumida */
+    background: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 18px;
+    border-left: 4px solid #1976d2; /* Borde vertical azul */
 
-    .detail-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
+    .details {
+      /* Padding interno de la tarjeta */
+      padding: 12px 16px;
 
-      &:not(:last-child) {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-      }
+      .detail-item {
+        /* Fila individual de detalle (label y value) */
+        display: flex;
+        justify-content: space-between; /* Alinea label a izquierda y value a derecha */
+        padding: 10px 0;
 
-      .label {
-        font-weight: 500;
-        color: #666;
-      }
+        &:not(:last-child) {
+          /* Separador horizontal para todas las filas excepto la última */
+          border-bottom: 1px solid #e0e0e0;
+        }
 
-      .value {
-        font-weight: 600;
-        color: #333;
+        .label {
+          font-weight: 500;
+          color: #666;
+        }
+
+        .value {
+          font-weight: 700;
+          color: #1976d2;
+        }
       }
     }
   }
 
+  /* CAJA DE ADVERTENCIA */
   .warning-box {
+    /* Estilo de la caja de advertencia */
     display: flex;
-    gap: 12px;
+    gap: 14px;
     background-color: #fff3cd;
-    border-left: 4px solid #ff9800;
+    border-left: 4px solid #f57c00; /* Borde vertical naranja */
     padding: 12px 16px;
-    border-radius: 4px;
-    margin-bottom: 12px;
+    border-radius: 8px;
+    animation: fadeIn 0.3s ease-out;
 
     mat-icon {
-      color: #ff9800;
-      flex-shrink: 0;
+      /* Icono de advertencia (triángulo) */
+      color: #f57c00;
+      font-size: 26px;
+      flex-shrink: 0; /* Previene que el icono se comprima */
     }
 
     p {
+      /* Texto de la advertencia */
       margin: 0;
+      color: #8a6d3b;
       font-size: 14px;
-      color: #856404;
       line-height: 1.5;
+      font-weight: 500;
     }
   }
 }
 
-mat-dialog-actions button {
-  gap: 8px;
+/* ACCIONES (mat-dialog-actions) */
+.dialog-actions {
+  /* Contenedor de botones */
+  margin-top: 10px;
+
+  button {
+    /* Estilos base para ambos botones */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-suspender {
+    /* Estilo específico para el botón de acción principal */
+    font-weight: 600;
+    letter-spacing: 0.4px;
+
+    mat-icon {
+      /* Color del icono dentro del botón de suspender */
+      color: rgb(228, 75, 75);
+    }
+  }
+}
+
+/* ANIMACIONES SUAVES */
+@keyframes fadeDown {
+  /* Animación para el contenido que baja suavemente */
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación para el warning box */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* RESPONSIVE (Ajustes para pantallas pequeñas) */
+@media (max-width: 600px) {
+  .dialog-title {
+    font-size: 18px;
+
+    .title-icon {
+      font-size: 24px;
+    }
+  }
+
+  .details-card {
+    border-left-width: 3px;
+  }
+
+  .warning-box {
+    font-size: 13px;
+
+    mat-icon {
+      font-size: 22px;
+    }
+  }
+}
+
+/* LÍNEA SEPARADORA SUPERIOR PARA ACCIONES */
+mat-dialog-actions {
+  /* Línea horizontal encima de los botones */
+  border-top: 2px solid #e0e0e0;
 }

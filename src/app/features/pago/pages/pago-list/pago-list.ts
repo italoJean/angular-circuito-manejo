@@ -9,20 +9,20 @@ import { Grid } from "../../../../shared/components/grid/grid";
 import { PagoDetailDialog } from '../../components/pago-detail-dialog/pago-detail-dialog';
 import { PagoListadoResponseDTO } from '../../model/pago-listado.response.model';
 import { PagoDetalleResponseDTO } from '../../model/pago-detalle.response.model';
+import { MaterialModule } from '../../../../shared/ui/material-module';
+import { ReservaMinutosModal } from '../../../reserva/components/reserva-minutos-modal/reserva-minutos-modal';
 
 @Component({
   selector: 'app-pago-list',
-  imports: [Grid],
+  imports: [Grid,MaterialModule],
   templateUrl: './pago-list.html',
   styleUrl: './pago-list.scss',
 })
 export class PagoList implements OnInit{
-
-
-
   
   private readonly _modalService=inject(ModalService);
   private readonly _pagoService=inject(PagoService);
+  private readonly _reservaService=inject(ReservaService);
   private readonly _notificacionService=inject(NotificacionService);
   private readonly _dialogService=inject(DialogService);
 
@@ -31,11 +31,16 @@ export class PagoList implements OnInit{
   // Guarda el estado de la lista de pagos.
   data = signal<PagoListadoResponseDTO[]>([]);
 
-  // ✅ Columnas a mostrar (usa las relaciones)
-  displayedColumns: Array<keyof PagoListadoResponseDTO | 'action' | 'details'> = [
-  'id','numeroBoleta', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 'monto','tipoPago', 'fechaPago', 'estado', 'details', 'action'
-];
+//   // ✅ Columnas a mostrar (usa las relaciones)
+//   displayedColumns: Array<keyof PagoListadoResponseDTO | 'action' | 'details'> = [
+//   'id','numeroBoleta', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 'monto','tipoPago', 'fechaPago', 'estado', 'details', 'action'
+// ];
 
+
+  // ✅ Columnas a mostrar (usa las relaciones)
+  displayedColumns: Array<string> = [
+  'id','numeroBoleta', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 'monto','tipoPago', 'fechaPago', 'estado', 'details'
+];
 
   // ✅ Columnas ordenables (solo algunas)
   sortables: Array<string> = ['id', 'fechaPago', 'estado', 'monto'] as const;
@@ -52,7 +57,6 @@ export class PagoList implements OnInit{
     fechaPago: 'Fecha de Pago',
     estado: 'Estado',
     details: 'Detalles',
-    action: 'Acción'
   });
 
   ngOnInit(): void {
@@ -124,6 +128,18 @@ onViewDetails(pagoListado: PagoListadoResponseDTO): void {
       this._notificacionService.error('Error al cargar detalles del pago');
     }
   });
+}
+
+onViewReservas(pago: PagoListadoResponseDTO): void {
+  this._reservaService.findByIdMinutos(pago.id).subscribe({
+    next: (response)=>{
+      this._modalService.openModal(ReservaMinutosModal,response).subscribe();
+    },
+    error:()=> {
+      this._notificacionService.error('No se pudieron cargar los minutos consumidos');
+
+    }
+  })
 }
 
 }

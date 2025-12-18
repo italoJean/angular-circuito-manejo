@@ -1,11 +1,11 @@
-import { MediaMatcher } from '@angular/cdk/layout';
+import { Breakpoints, MediaMatcher,BreakpointObserver } from '@angular/cdk/layout';
 import { Injectable, Signal, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScreenSizeService {
-    //MediaQueryList es una interfaz que representa una consulta de medios CSS (media query) y escuchas sus cambios en el tamaño de la pantalla.
+   ///MediaQueryList es una interfaz que representa una consulta de medios CSS (media query) y escuchas sus cambios en el tamaño de la pantalla.
   private mobileQuery: MediaQueryList;
   private readonly _isMobile = signal(false);
 
@@ -25,5 +25,6 @@ export class ScreenSizeService {
   get isMobile(): Signal<boolean> {
     return this._isMobile;
   }
+
 }
 

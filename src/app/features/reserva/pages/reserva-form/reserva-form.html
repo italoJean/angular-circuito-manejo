@@ -1,88 +1,114 @@
-<h2 mat-dialog-title>{{ isEditing ? 'Editar' : 'Crear' }} Reserva</h2>
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">directions_car</mat-icon>
+  {{ isEditing ? 'Editar Reserva' : 'Crear Reserva' }}
+</h2>
 
-<mat-dialog-content>
-  <form [formGroup]="form" class="reserva-form">
+<mat-dialog-content class="dialog-body" [formGroup]="form">
 
-    <!-- Campo: Pago -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Pago</mat-label>
-      <mat-select formControlName="pagoId">
-        <mat-optgroup label="Buscar pago">
-          <mat-form-field class="search-field">
-            <input matInput placeholder="Buscar por N° Boleta" 
-                   (keyup)="filtroPago.set($event.target.value)">
-          </mat-form-field>
-        </mat-optgroup>
-        @for (pago of pagosFiltrados; track pago.id) {
-          <mat-option [value]="pago.id">
-            {{ pago.numeroBoleta }} - {{ pago.monto | currency }}
-          </mat-option>
-        }
-      </mat-select>
-      <mat-error *ngIf="form.get('pagoId')?.hasError('required')">
-        El pago es requerido
-      </mat-error>
-    </mat-form-field>
+  <div class="section-title">Datos del Pago</div>
 
-    <!-- Campo: Vehículo -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Vehículo</mat-label>
-      <mat-select formControlName="vehiculoId">
-        <mat-optgroup label="Buscar vehículo">
-          <mat-form-field class="search-field">
-            <input matInput placeholder="Buscar por placa o marca" 
-                   (keyup)="filtroVehiculo.set($event.target.value)">
-          </mat-form-field>
-        </mat-optgroup>
-        @for (vehiculo of vehiculosFiltrados; track vehiculo.id) {
-          <mat-option [value]="vehiculo.id">
-            {{ vehiculo.placa }} - {{ vehiculo.marca }} ({{ vehiculo.modelo }})
-          </mat-option>
-        }
-      </mat-select>
-      <mat-error *ngIf="form.get('vehiculoId')?.hasError('required')">
-        El vehículo es requerido
-      </mat-error>
-    </mat-form-field>
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-icon matPrefix>receipt</mat-icon>
+    <mat-label>Pago</mat-label>
 
-    <!-- Campo: Fecha de Reserva (con botón para abrir calendario) -->
-<div class="fecha-reserva-group">
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Fecha y Hora de Reserva</mat-label>
-    <input matInput [matDatepicker]="picker" 
-           formControlName="fechaReserva" 
-           readonly>
-          
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
+    <mat-select formControlName="pagoId">
+      <mat-optgroup label="Buscar pago">
+        <mat-form-field class="search-field">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            placeholder="Buscar por N° Boleta, Nombre o Apellido"
+            (keyup)="filtroPago.set($event.target.value)"
+          />
+        </mat-form-field>
+      </mat-optgroup>
+
+      @for (pago of pagosFiltrados; track pago.id) {
+      <mat-option [value]="pago.id">
+        {{ pago.numeroBoleta }} — {{pago.nombreUsuario}} {{pago.apellidoUsuario}} 
+      </mat-option>
+      }
+    </mat-select>
+
+    <mat-error *ngIf="form.get('pagoId')?.hasError('required')">
+      Seleccionar un pago es obligatorio
+    </mat-error>
   </mat-form-field>
 
- <!-- Botón para abrir el calendario completo -->
-  <button mat-raised-button color="accent" (click)="openCalendarDialog()" class="calendar-button">
-    <mat-icon>calendar_month</mat-icon>
-    Abrir Calendario Completo
-  </button>
-</div>
 
-    <!-- Campo: Minutos Reservados -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Minutos Reservados</mat-label>
-      <input matInput type="number" formControlName="minutosReservados" min="1">
-      <mat-hint>Ej: 60 minutos = 1 hora</mat-hint>
-      <mat-error *ngIf="form.get('minutosReservados')?.hasError('required')">
-        Los minutos reservados son requeridos
-      </mat-error>
-      <mat-error *ngIf="form.get('minutosReservados')?.hasError('min')">
-        Debe ser al menos 1 minuto
-      </mat-error>
+  <div class="section-title">Datos del Vehiculo</div>
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-icon matPrefix>car_rental</mat-icon>
+    <mat-label>Vehículo</mat-label>
+
+    <mat-select formControlName="vehiculoId">
+      <mat-optgroup label="Buscar vehículo">
+        <mat-form-field class="search-field">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            placeholder="Placa o marca"
+            (keyup)="filtroVehiculo.set($event.target.value)"
+          />
+        </mat-form-field>
+      </mat-optgroup>
+
+      @for (vehiculo of vehiculosFiltrados; track vehiculo.id) {
+      <mat-option [value]="vehiculo.id">
+        {{ vehiculo.placa }} — {{ vehiculo.marca }} ({{ vehiculo.modelo }})
+      </mat-option>
+      }
+    </mat-select>
+
+    <mat-error *ngIf="form.get('vehiculoId')?.hasError('required')">
+      El vehículo es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+
+  <div class="section-title">Datos de la fecha de Reserva</div>
+  <div class="fecha-group">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-icon matPrefix>event</mat-icon>
+      <mat-label>Fecha y Hora de Reserva</mat-label>
+
+      <input matInput formControlName="fechaReserva" readonly placeholder="Seleccione en el calendario">
     </mat-form-field>
 
-  </form>
+    <button mat-stroked-button color="primary" (click)="openCalendarDialog()" class="calendar-btn"
+    [disabled]="form.get('vehiculoId')?.invalid || form.get('pagoId')?.invalid">
+      <mat-icon>calendar_month</mat-icon>
+      Seleccionar
+    </button>
+  </div>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-icon matPrefix>timer</mat-icon>
+    <mat-label>Minutos Reservados</mat-label>
+
+    <input matInput type="number" formControlName="minutosReservados" min="1" />
+<mat-hint>Establecido por el calendario</mat-hint>
+
+    <mat-error *ngIf="form.get('minutosReservados')?.hasError('required')">
+      Este campo es obligatorio
+    </mat-error>
+
+    <mat-error *ngIf="form.get('minutosReservados')?.hasError('min')">
+      Debe ser al menos 1 minuto
+    </mat-error>
+  </mat-form-field>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">
+  <button mat-button (click)="close()">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+
+  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">
+    <mat-icon>check</mat-icon>
     {{ isEditing ? 'Actualizar' : 'Crear' }}
   </button>
 </mat-dialog-actions>
+
+

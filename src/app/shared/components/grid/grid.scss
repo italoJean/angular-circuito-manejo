@@ -1,0 +1,291 @@
+.grid-container {
+  width: 100%;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 14px;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+table {
+  width: 100%;
+  min-width: 650px; // evita romper el diseño
+}
+
+/* header tabla */
+.custom-header-row {
+  background: #1565c0;
+}
+
+.custom-header-cell {
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 14px 12px;
+  font-size: 14px;
+
+  /* Línea sutil inferior */
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Hover en header */
+.custom-header-cell:hover {
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.row-fila:hover {
+  background-color: #e3f2fd; /* azul claro */
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Botones de acción */
+button[matIconButton] {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  margin: 0 4px;
+
+  &:hover mat-icon {
+    transform: scale(1.15);
+    transition: 0.15s;
+  }
+}
+
+/* Colores a iconos */
+button[matIconButton] mat-icon {
+  font-size: 20px;
+  color: #555;
+}
+
+/* Color específico según acción */
+button[matIconButton].edit-btn mat-icon {
+  color: #1976d2; // azul edición
+}
+
+button[matIconButton].delete-btn mat-icon {
+  color: #d32f2f; // rojo eliminar
+}
+
+button[matIconButton].details-btn mat-icon {
+  color: #5c6bc0; // morado detalles
+}
+
+button[matIconButton].reservas-btn mat-icon {
+  color: #5ec0e7; // morado detalles
+}
+
+
+button[matIconButton].reprogramar-btn mat-icon {
+  color: #7718dc; // morado detalles
+}
+
+
+button[matIconButton].incidencia-btn mat-icon {
+  color: #f40370; // morado detalles
+}
+
+
+button[matIconButton].cancelar-btn mat-icon {
+  color: #a82727; // morado detalles
+}
+
+/* Hover colores */
+button[matIconButton].edit-btn:hover mat-icon {
+  color: #0d47a1;
+  cursor: pointer;
+}
+button[matIconButton].delete-btn:hover mat-icon {
+  color: #b71c1c;
+  cursor: pointer;
+}
+button[matIconButton].details-btn:hover mat-icon {
+  color: #3949ab;
+
+  cursor: pointer;
+}
+button[matIconButton].reservas-btn:hover mat-icon {
+  color: #0b95cc;
+
+  cursor: pointer;
+}
+
+
+
+button[matIconButton].reprogramar-btn:hover mat-icon {
+  color: #570aa9; // morado detalles
+}
+
+
+button[matIconButton].incidencia-btn:hover mat-icon {
+  color: #cb035d; // morado detalles
+}
+
+
+button[matIconButton].cancelar-btn:hover mat-icon {
+  color: #9b1616; // morado detalles
+}
+
+
+
+
+// /* ======================= */
+// /* 💡 Directiva de Sass Modules - ¡SOLUCIÓN AL ERROR! */
+// /* ======================= */
+// @use "sass:color";
+
+
+// /* ======================= */
+// /*      VARIABLES GLOBALES     */
+// /* ======================= */
+// $color-primary: #1565c0; // Azul fuerte para el header
+// $color-primary-light: #e3f2fd; // Azul claro para hover de fila
+// $color-text-default: #555;
+// $color-text-accent: #5a69b9;
+// $shadow-elevation: 0 4px 18px rgba(0, 0, 0, 0.08);
+// $transition-speed: 0.2s;
+
+// // Colores de acciones
+// $color-edit: #1976d2;
+// $color-delete: #d32f2f;
+// $color-details: #5c6bc0;
+// $color-reservas: #5ec0e7;
+// $color-reprogramar: #7718dc;
+// $color-incidencia: #f40370;
+// $color-cancelar: #a82727;
+
+
+// /* ======================= */
+// /*      B: data-grid          */
+// /* ======================= */
+
+// .data-grid {
+//     width: 100%;
+    
+//     // E: Elemento Wrapper (Tabla y Paginador)
+//     &__wrapper {
+//         overflow-x: auto;
+//         border-radius: 14px;
+//         padding: 16px;
+//         background: #ffffff;
+//         box-shadow: $shadow-elevation;
+//     }
+
+//     // E: Elemento Tabla
+//     &__table {
+//         width: 100%;
+//         min-width: 650px; 
+//     }
+    
+//     // E: Elemento Fila de Encabezado
+//     &__header-row {
+//         background: $color-primary;
+//     }
+    
+//     // E: Elemento Celda de Encabezado
+//     &__header-cell {
+//         color: white;
+//         font-weight: 600;
+//         letter-spacing: 0.5px;
+//         text-transform: uppercase;
+//         padding: 14px 12px;
+//         font-size: 14px;
+
+//         border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+        
+//         &:hover {
+//             background: rgba(255, 255, 255, 0.08);
+//             cursor: pointer;
+//         }
+
+//         // M: Modificador Ordenable
+//         &--sortable {
+//             // Estilos específicos para celdas ordenables
+//         }
+//     }
+    
+//     // E: Elemento Fila (Cuerpo)
+//     &__row-fila {
+//         &:hover {
+//             background-color: $color-primary-light;
+//             transition: background-color $transition-speed ease-in-out;
+//         }
+//     }
+
+//     // E: Elemento Celda (Cuerpo)
+//     &__cell {
+//         // Estilos para las celdas de datos
+//     }
+
+//     // E: Elemento Botón
+//     &__button {
+//         background: transparent;
+//         border: none;
+//         box-shadow: none;
+//         outline: none;
+//         margin: 0 4px;
+//         padding: 8px;
+        
+//         // Estilo del ícono por defecto
+//         mat-icon {
+//             font-size: 20px;
+//             color: $color-text-default;
+//             transition: transform 0.15s, color 0.15s;
+//         }
+        
+//         // Transformación al pasar el ratón
+//         &:hover mat-icon {
+//             transform: scale(1.15);
+//         }
+        
+//         // Modificadores de color:
+//         &--edit mat-icon { color: $color-edit; }
+//         &--delete mat-icon { color: $color-delete; }
+//         &--details mat-icon { color: $color-details; }
+//         &--reservas mat-icon { color: $color-reservas; }
+//         &--reprogramar mat-icon { color: $color-reprogramar; }
+//         &--incidencia mat-icon { color: $color-incidencia; }
+//         &--cancelar mat-icon { color: $color-cancelar; }
+        
+//         // Efectos hover por modificador (Aquí se usa color.adjust):
+//         &:hover {
+//             &.data-grid__button--edit mat-icon { color: color.adjust($color-edit, $lightness: -10%); cursor: pointer; }
+//             &.data-grid__button--delete mat-icon { color: color.adjust($color-delete, $lightness: -10%); cursor: pointer; }
+//             &.data-grid__button--details mat-icon { color: color.adjust($color-details, $lightness: -10%); cursor: pointer; }
+//             &.data-grid__button--reservas mat-icon { color: color.adjust($color-reservas, $lightness: -10%); cursor: pointer; }
+//             &.data-grid__button--reprogramar mat-icon { color: color.adjust($color-reprogramar, $lightness: -10%); cursor: pointer; }
+//             &.data-grid__button--incidencia mat-icon { color: color.adjust($color-incidencia, $lightness: -10%); cursor: pointer; }
+//             &.data-grid__button--cancelar mat-icon { color: color.adjust($color-cancelar, $lightness: -10%); cursor: pointer; }
+//         }
+//     }
+    
+//     // E: Elemento Paginador
+//     &__paginator {
+//         // Estilos para el paginador si son necesarios
+//     }
+// }
+
+// /* ======================= */
+// /*      B: FILTER (Componente anidado)          */
+// /* ======================= */
+// .filter {
+//     // Clase principal del componente app-filter (usado en el HTML como data-grid__filter filter)
+//     margin-bottom: 20px;
+
+//     &__field {
+//         width: 300px; 
+//         .mat-form-field-wrapper {
+//             padding-bottom: 0;
+//         }
+//     }
+    
+//     &__icon {
+//         color: $color-text-accent; 
+//         font-size: 20px;
+//     }
+// }

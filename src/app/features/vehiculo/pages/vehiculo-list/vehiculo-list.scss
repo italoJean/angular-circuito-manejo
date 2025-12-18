@@ -1,0 +1,69 @@
+/*      VARIABLES GLOBALES     */
+$color-primary: #3f51b5;
+$color-text-main: #333333;
+$shadow-elevation: 0 4px 10px rgba(0, 0, 0, 0.05);
+$transition-speed: 0.3s;
+
+
+/*      vehiculo-management          */
+
+.vehiculo-management {
+    // Bloque principal que contiene toda la sección
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: $shadow-elevation; 
+    margin: 20px; 
+
+    &__header {
+        // Elemento que contiene el título y el botón
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f0f0f0; 
+    }
+
+    &__title {
+        // Elemento Título con la barra lateral estética
+        font-size: 24px;
+        font-weight: 700;
+        color: $color-text-main;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        &::before {
+            // Pseudo-elemento que crea la barra vertical
+            content: '';
+            width: 6px;
+            height: 28px;
+            background-color: $color-primary;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    }
+
+    &__button-add {
+        // Elemento Botón principal
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 18px; 
+        border-radius: 8px;
+        transition: transform $transition-speed, box-shadow $transition-speed;
+
+        mat-icon {
+            font-size: 20px;
+        }
+        
+        // Efecto hover sutil para interactividad
+        &:hover {
+            box-shadow: 0 4px 8px rgba($color-primary, 0.3);
+            transform: translateY(-1px);
+        }
+    }
+}

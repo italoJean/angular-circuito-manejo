@@ -1,41 +1,99 @@
+
+.card-container {
+  padding: 15px;
+  border-radius: 16px;
+  background: #fafafa;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+}
+
 .reserva-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px 0;
+  gap: 20px;
+}
 
-  .full-width {
-    width: 100%;
+.full-width {
+  width: 100%;
+}
+
+.search-field {
+  padding: 4px 8px;
+}
+
+.fecha-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.calendar-btn {
+  white-space: nowrap;
+  min-width: 200px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 56px;
+  margin-top: -15px;
+}
+
+/* 📱 En pantallas pequeñas, acomodar en columna */
+@media (max-width: 600px) {
+  .fecha-group {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .search-field {
-    margin: 8px;
-    width: calc(100% - 16px);
+  .calendar-btn {
+    width: 100%;          /* botón ocupa todo el ancho */
+    margin-top: 0;        /* quitar el salto hacia arriba */
+    height: 48px;         /* más pequeño en móvil */
   }
 }
 
 mat-dialog-content {
-  min-width: 350px;
+  padding-top: 10px !important;
 }
 
-mat-form-field {
-  display: block;
+mat-form-field mat-icon[matPrefix] {
+  margin-right: 8px;
+  opacity: 0.7;
 }
-
-.fecha-reserva-group {
+.dialog-title {
   display: flex;
+  align-items: center;
   gap: 12px;
-  align-items: flex-end;
+  font-size: 22px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  color: #243cc0;
 
-  .full-width {
-    flex: 1;
-  }
-
-  .calendar-button {
-    white-space: nowrap;
-    min-width: 200px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
+  border-bottom: 2px solid #e0e0e0;
 }
+
+.title-icon {
+  font-size: 28px;
+  color: #243cc0;
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 10px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.section-title {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #5a69b9;
+  border-left: 4px solid #3f51b5;
+  padding-left: 8px;
+  margin-bottom: -8px;
+}
+
+

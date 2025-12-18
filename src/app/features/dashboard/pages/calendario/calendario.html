@@ -1,0 +1,24 @@
+<section class="calendario-container">
+    <div class="header">
+        <h2 class="title">Lista de Reservas</h2>
+    </div>
+
+    @if (!isLoading) {
+        <p>Cargando reservas...</p> 
+        <!-- <mat-spinner></mat-spinner> -->
+      <mat-spinner diameter="80"></mat-spinner>
+
+    } @else {
+
+    
+
+    <app-full-calendar #calendar
+        [reservas]="reservas"
+        [selectable]="false"
+        [isValidSelection]="true"
+        validationMessage="Modo solo lectura: Haz clic en un evento para ver detalles."
+        (eventClicked)="handleEventClick($event)"> 
+    </app-full-calendar>
+}
+
+</section>

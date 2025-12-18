@@ -1,12 +1,22 @@
-<section> 
-<button mat-raised-button (click)="openCreateModal()">Nuevo Paquete</button>
-      
+<section class="pago-management">
+  <div class="pago-management__header header">
+    <h2 class="pago-management__title title">Gestión de Pagos</h2>
+    
+    <button mat-raised-button color="primary" class="pago-management__button-add"
+      (click)="openCreateModal()">
+      <mat-icon>add_circle</mat-icon>
+      Nuevo Pago
+    </button>
+  </div> 
+
   <app-grid
     [data]="data()"
     [displayedColumns]="displayedColumns"
     [sortableColumns]="sortables"
     [columnLabels]="columnLabels()"
-
-    (details)="onViewDetails($event)">>
+      [pipesMap]="{  
+      monto: 'currency',fechaPago: 'date'  }"
+    (reservas)="onViewReservas($event)" 
+    (details)="onViewDetails($event)">
   </app-grid>
 </section>

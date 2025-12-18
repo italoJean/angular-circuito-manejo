@@ -1,0 +1,54 @@
+<h2 mat-dialog-title class="calendar-dialog__title">
+  <mat-icon>calendar_month</mat-icon>
+  Seleccionar Fecha y Hora de Reserva
+</h2>
+
+<mat-dialog-content class="calendar-dialog__content">
+
+  @if (isLoadingData) {
+    <div class="calendar-dialog__loading">
+      <mat-spinner diameter="80"></mat-spinner>
+      <p class="calendar-dialog__loading-text">Cargando horarios de vehículo y cliente...</p>
+    </div>
+  } @else {
+
+    <div class="calendar-dialog__info">
+      <p><strong>📋 Horario de Negocio:</strong> 7:00 AM - 7:00 PM</p>
+      <p><strong>🔴 Rojo:</strong> Horarios ocupados del vehículo</p>
+      <p><strong>⚠️ Aviso:</strong> El cliente no debe tener cruce con otras reservas.</p>
+    </div>
+
+    <div
+      class="calendar-dialog__validation
+      {{ isValidSelection ? 'calendar-dialog__validation--success' : 'calendar-dialog__validation--error' }}"
+    >
+      <mat-icon>{{ isValidSelection ? 'check_circle' : 'warning' }}</mat-icon>
+      <p>{{ validationMessage }}</p>
+    </div>
+
+    <app-full-calendar
+      [reservas]="reservasVehiculo"
+      [selectable]="true"
+      [validationMessage]="validationMessage"
+      [isValidSelection]="isValidSelection"
+      (dateSelected)="onDateSelected($event)"
+      (eventClicked)="handleEventClick($event)"
+    >
+    </app-full-calendar>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions class="calendar-dialog__actions" align="end">
+  <button mat-button (click)="close()">Cerrar</button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="confirm()"
+    [disabled]="!isValidSelection || isLoadingData"
+    class="calendar-dialog__confirm"
+  >
+    <mat-icon>check</mat-icon>
+    Confirmar Selección
+  </button>
+</mat-dialog-actions>

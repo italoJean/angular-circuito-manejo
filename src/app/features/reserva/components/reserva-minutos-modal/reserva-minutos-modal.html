@@ -1,0 +1,149 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="dialog-title__icon">schedule</mat-icon>
+  Consumo de Minutos del Pago #{{ data.pagoId }}
+</h2>
+
+<mat-dialog-content class="dialog-body">
+
+  <!--  RESUMEN PRINCIPAL        -->
+ <section class="summary">
+  
+  <mat-card class="summary__card summary__card--total">
+    <div class="summary__title">
+      <mat-icon class="summary__icon summary__icon--total">timelapse</mat-icon>
+      Total Paquete
+    </div>
+    <div class="summary__value summary__value--total">{{ data.minutosTotalesPaquete | minutosHorasPipe }}</div>
+  </mat-card>
+
+  <mat-card class="summary__card summary__card--consumed">
+    <div class="summary__title">
+      <mat-icon class="summary__icon summary__icon--consumed">timer_off</mat-icon>
+      Consumidos
+    </div>
+    <div class="summary__value summary__value--danger">
+      {{ data.minutosConsumidos | minutosHorasPipe }} 
+    </div>
+  </mat-card>
+
+  <mat-card class="summary__card summary__card--available">
+    <div class="summary__title">
+      <mat-icon class="summary__icon summary__icon--available">watch_later</mat-icon>
+      Disponibles
+    </div>
+    <div class="summary__value summary__value--success">
+      {{ data.minutosDisponibles | minutosHorasPipe }} 
+    </div>
+  </mat-card>
+
+</section>
+
+
+  <!--  TABLA HISTORIAL          -->
+  <h3 class="section-title">
+    <mat-icon class="section-title__icon">history</mat-icon> Historial de Reservas
+  </h3>
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="data.reservas" class="table">
+    
+    <!-- ID -->
+    <ng-container matColumnDef="reservaId">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let r">{{ r.reservaId }}</td>
+    </ng-container>
+
+    <!-- Fecha Reserva -->
+    <ng-container matColumnDef="fechaReserva">
+      <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+      <td mat-cell *matCellDef="let r">
+        {{ r.fechaReserva | date : 'dd/MM/yyyy HH:mm' }}
+      </td>
+    </ng-container>
+
+    <!-- Fecha Fin -->
+    <ng-container matColumnDef="fechaFin">
+      <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
+      <td mat-cell *matCellDef="let r">
+        {{ r.fechaFin | date : 'dd/MM/yyyy HH:mm' }}
+      </td>
+    </ng-container>
+
+    <!-- Minutos -->
+    <ng-container matColumnDef="minutosReservados">
+      <th mat-header-cell *matHeaderCellDef>Reservado</th>
+      <td mat-cell *matCellDef="let r">{{ r.minutosReservados | minutosHorasPipe }}</td>
+    </ng-container>
+
+    <!-- Estado -->
+    <ng-container matColumnDef="estado">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let r">
+        <span class="status-pill" [ngClass]="r.estado.toLowerCase()">
+          {{ r.estado }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Detalle -->
+    <ng-container matColumnDef="detalle">
+      <th mat-header-cell *matHeaderCellDef>Detalle</th>
+      <td mat-cell *matCellDef="let r">
+        <button mat-icon-button (click)="toggle(r)">
+          <mat-icon>
+            {{ expanded?.reservaId === r.reservaId ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns" ></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" class="table__row"></tr>
+  </table>
+  </div>
+
+  <!--  EXPAND DETALLES          -->
+ @if (expanded) {
+   <mat-accordion class="details">
+    <mat-expansion-panel [expanded]="true" class="details__panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Detalles de Reserva #{{ expanded.reservaId }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <!-- SUBDETALLES -->
+      <mat-accordion multi="true" class="subdetails">
+        <mat-expansion-panel *ngFor="let d of expanded.detalle" [ngClass]="'subdetails__panel--' + d.tipo.toLowerCase()" class="subdetails__panel">
+         
+          <mat-expansion-panel-header>
+            <mat-panel-title class="subdetails__title-content">
+                <mat-icon class="subdetails__icon">
+                    {{ d.tipo === 'RESERVA' ? 'event_available' : 'warning_amber' }}
+                </mat-icon>
+                <span>{{ d.tipo }} - {{ d.fechaRegistro | date : 'dd/MM/yyyy HH:mm' }}</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="subdetails__content">
+            <p class="subdetails__text">{{ d.detalle }}</p>
+
+            <span>Antes: <strong>{{ d.minutosReservadosAntes | minutosHorasPipe }}</strong></span>
+            <span>Usados: <strong>{{ d.minutosUsados | minutosHorasPipe }}</strong></span>
+            <span>Devueltos: <strong>{{ d.minutosDevueltos | minutosHorasPipe }}</strong></span>
+
+            <span class="text-primary">
+              Afectados: <strong>{{ d.minutosAfectados | minutosHorasPipe }}</strong>
+            </span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-expansion-panel>
+  </mat-accordion>
+ }
+</mat-dialog-content>
+
+<!--  ACCIONES DEL MODAL       -->
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

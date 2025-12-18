@@ -35,7 +35,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-  ],
+    MaterialModule
+],
   templateUrl: './pago-form.html',
   styleUrl: './pago-form.scss',
 })
@@ -172,7 +173,7 @@ export class PagoForm implements OnInit {
       };
 
       this.pagoService.createCuotas(request).subscribe(resp => {
-        console.log("✅ Pago en cuotas creado:", resp);
+        this.dialogRef.close(resp);
       });
 
     } else {
@@ -184,6 +185,7 @@ export class PagoForm implements OnInit {
 
       this.pagoService.createContado(request).subscribe(resp => {
         console.log("✅ Pago al contado creado:", resp);
+        this.dialogRef.close(resp);
       });
     }
   }

@@ -1,0 +1,134 @@
+/*  Directiva de Sass Modules */
+@use "sass:color";
+
+/*      VARIABLES GLOBALES     */
+$color-primary: #3f51b5;
+$color-primary-dark: #243cc0;
+$color-text-main: #333333;
+$color-text-accent: #5a69b9;
+$color-icon-subtle: #9fa8da; // Color suave para iconos de campo
+$color-bg-light: #f8f9ff; // Usando el color de tu cuotas-box
+$color-border-light: #e0e0e0;
+
+$border-radius: 8px;
+$transition-speed: 0.3s;
+$shadow-elevation: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+
+/*       MODAL (Contenedor principal)          */
+
+.modal {
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 600;
+        padding-bottom: 12px;
+        color: $color-primary-dark;
+        border-bottom: 2px solid $color-border-light;
+
+        .modal__header-icon {
+            font-size: 28px;
+            color: $color-primary-dark;
+        }
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-top: 15px;
+        padding-bottom: 5px;
+    }
+
+    &__actions {
+        padding-top: 15px;
+        padding-bottom: 8px;
+        border-top: 1px solid $color-border-light;
+        
+        button {
+            transition: all $transition-speed;
+            border-radius: $border-radius;
+            
+            &[mat-flat-button] {
+                box-shadow: $shadow-elevation;
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 15px rgba($color-primary-dark, 0.25);
+                }
+            }
+        }
+    }
+}
+
+
+/*      FORM (Contenido del formulario)    */
+
+.form {
+    &__section-title {
+        margin-top: 6px;
+        font-size: 16px;
+        font-weight: 700;
+        color: $color-text-main;
+        border-left: 4px solid $color-primary;
+        padding-left: 10px;
+        margin-bottom: -5px; // Ajuste para acercar al campo de formulario
+    }
+
+    &__field {
+        width: 100%;
+
+        // Estilización de los campos de Material
+        .mat-form-field-appearance-outline .mat-form-field-wrapper {
+            padding-bottom: 0;
+        }
+        
+        // Ajuste fino para la posición de los prefijos/iconos
+        .mat-form-field-prefix {
+            padding-top: 3px; 
+        }
+    }
+    
+    // E: Elemento Icono
+    &__icon {
+        color: $color-icon-subtle; 
+        font-size: 20px;
+    }
+    
+    // E: Elemento Toggle Cuotas
+    &__toggle-cuotas {
+        margin-top: 10px;
+        margin-bottom: -10px;
+        font-weight: 500;
+    }
+    
+    // E: Elemento Cuotas Box
+    &__cuotas-box {
+        background: $color-bg-light;
+        padding: 16px;
+        border-radius: $border-radius;
+        border-left: 5px solid $color-primary; // Usando 5px para más prominencia
+        display: flex;
+        flex-direction: column;
+        gap: 10px; // Reducido ligeramente para compactar
+        
+        .form__field {
+            margin-bottom: 0; // Eliminamos el margen inferior dentro del box
+        }
+
+        // M: Modificador Fade
+        &--fade {
+            animation: fadeIn 0.25s ease-in-out;
+        }
+    }
+}
+
+
+/*      ANIMACIONES        */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}

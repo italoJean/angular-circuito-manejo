@@ -1,9 +1,16 @@
-<h2 mat-dialog-title>Confirmar Pago</h2>
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">attach_money</mat-icon>
+  Confirmar Pago
+</h2>
 
-<mat-dialog-content>
-  <p>¿Seguro que deseas pagar la cuota #{{ data.numeroCuota }}?</p>
+<mat-dialog-content class="dialog-body">
 
-  <mat-form-field appearance="fill" class="w-full">
+  <p class="dialog-message">
+    ¿Seguro que deseas pagar la cuota
+    <strong>#{{ data.numeroCuota }}</strong>?
+  </p>
+
+  <mat-form-field appearance="fill" class="payment-field">
     <mat-label>Método de pago</mat-label>
     <mat-select [(value)]="metodoSeleccionado">
       @for (m of metodosPago; track m) {
@@ -11,9 +18,14 @@
       }
     </mat-select>
   </mat-form-field>
+
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="cancelar()">Cancelar</button>
-  <button mat-flat-button color="primary" (click)="confirmar()">Confirmar</button>
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button class="btn-cancel" (click)="cancelar()">Cancelar</button>
+
+  <button mat-flat-button color="primary" class="btn-confirm" (click)="confirmar()">
+    <mat-icon>check_circle</mat-icon>
+    Confirmar
+  </button>
 </mat-dialog-actions>

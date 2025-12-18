@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 import { Home } from "./pages/home/home";
 import { Toolbar } from "../../core/layout/toolbar/toolbar";
+import { Calendario } from "../dashboard/pages/calendario/calendario";
 
 
 export const dashboardRoutes: Routes = [
@@ -17,6 +18,12 @@ export const dashboardRoutes: Routes = [
                 path:'home',
                 component:Home,
                 title:'Home'
+            },
+            {
+                path:'calendario',
+                component:Calendario,
+                // loadComponent:()=>import('../dashboard/pages/calendario/calendario').then((m)=>m.Calendario),
+                title:'Calendario'
             },
             {
                 path:'paquete',

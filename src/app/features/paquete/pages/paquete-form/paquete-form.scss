@@ -1,0 +1,142 @@
+/*    Directiva de Sass Modules    */
+@use "sass:color";
+
+/*      VARIABLES GLOBALES     */
+$color-primary: #3f51b5;
+$color-primary-dark: #243cc0;
+$color-text-main: #333333;
+$color-text-accent: #5a69b9;
+$color-bg-light: #f5f7ff;
+$color-border-light: #e0e0e0;
+$color-icon-subtle: #9fa8da; // Color más suave para los prefijos de campo
+
+$border-radius: 8px;
+$transition-speed: 0.3s;
+$shadow-elevation: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+
+/*   MODAL (Contenedor principal)    */
+
+.modal {
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 600;
+        padding-bottom: 12px;
+        color: $color-primary-dark;
+        border-bottom: 2px solid $color-border-light;
+    }
+
+    &__header-icon {
+        font-size: 26px;
+        color: $color-primary-dark;
+        padding-left: 15px;
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        padding-top: 15px;
+    }
+
+    &__actions {
+        padding-top: 15px;
+        padding-bottom: 8px;
+        border-top: 1px solid $color-border-light;
+        
+        button {
+            transition: all $transition-speed;
+            border-radius: $border-radius;
+            
+            &[mat-flat-button] {
+                box-shadow: $shadow-elevation;
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 15px rgba($color-primary-dark, 0.25);
+                }
+            }
+        }
+    }
+}
+
+
+/* FORM (Contenido del formulario)  */ 
+
+.form {
+    &__section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: $color-text-main;
+        border-left: 4px solid $color-primary;
+        padding-left: 10px;
+        margin-bottom: 15px;
+        margin-top: 5px;
+    }
+
+    &__field {
+        width: 100%;
+        margin-bottom: 20px;
+        
+        // Estilización de los campos de Material
+        .mat-form-field-appearance-outline .mat-form-field-wrapper {
+            padding-bottom: 0;
+        }
+        
+        /* Asegura que el ícono esté alineado y estilizado */
+        .mat-form-field-prefix {
+            padding-top: 3px; // Ajuste vertical para centrar
+        }
+    }
+    
+    &__icon {
+        color: $color-icon-subtle; // Ícono sutil y limpio
+        font-size: 20px;
+    }
+
+
+    &__toggle-group {
+        background: $color-bg-light;
+        border-radius: $border-radius;
+        padding: 12px 16px;
+        box-shadow: $shadow-elevation;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        border-left: 5px solid $color-primary;
+        margin-bottom: 25px;
+        margin-top: 5px;
+        
+        .mat-slide-toggle-bar {
+            // Usando color.adjust para evitar la advertencia de deprecación
+            background-color: color.adjust($color-primary, $lightness: 20%); 
+        }
+    }
+
+
+    &__toggle-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: $color-text-accent;
+    }
+
+
+    /* M: Modificador para la animación de entrada */
+    &__field--fade {
+        animation: fadeIn $transition-speed ease-in-out;
+    }
+}
+
+
+/*  ANIMACIONES    */ 
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+

@@ -1,0 +1,137 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">event</mat-icon>
+  Detalle de Reserva #{{ data.id }}
+</h2>
+
+<mat-dialog-content class="detail-dialog-content">
+  <!-- SECCIÓN CLIENTE -->
+  <mat-card class="info-card usuario-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>person</mat-icon>
+        Información del Usuario
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Nombre Completo:</span>
+          <span class="value">{{ data.pago.usuario.nombre }} {{ data.pago.usuario.apellido }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Email:</span>
+          <span class="value">{{ data.pago.usuario.email }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Documento:</span>
+          <span class="value"
+            >{{ data.pago.usuario.tipoDocumento }} - {{ data.pago.usuario.numeroDocumento }}</span
+          >
+        </div>
+
+        <div class="info-item">
+          <span class="label">Teléfono:</span>
+          <span class="value">{{ data.pago.usuario.telefono }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+
+  <!-- SECCIÓN FECHAS -->
+  <mat-card class="info-card fecha-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>event</mat-icon>
+        Fechas de la Reserva
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Inicio:</span>
+          <span class="value">{{ data.fechaReserva | date : 'short' }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Fin:</span>
+          <span class="value">{{ data.fechaFin | date : 'short' }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Estado:</span>
+          <span class="chip estado" [ngClass]="data.estado.toLowerCase()">
+            {{ data.estado }}
+          </span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- SECCIÓN PAQUETE -->
+  <mat-card class="info-card paquete-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>card_giftcard</mat-icon>
+        Paquete
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Nombre:</span>
+          <span class="value">{{ data.pago.paquete.nombre }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Descripción:</span>
+          <span class="value">{{ data.pago.paquete.descripcion }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Duración Minutos:</span>
+          <span class="value">{{ data.pago.paquete.duracionMinutos }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- SECCIÓN VEHICULO -->
+  <mat-card class="info-card vehiculo-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>directions_car</mat-icon>
+        Vehículo
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Marca:</span>
+          <span class="value">{{ data.vehiculo.marca }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Modelo:</span>
+          <span class="value">{{ data.vehiculo.modelo }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Placa:</span>
+          <span class="value">{{ data.vehiculo.placa }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button color="warn" mat-dialog-close (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

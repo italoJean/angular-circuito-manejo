@@ -1,16 +1,17 @@
-import { EstadoReservaEnum } from "../enum/estado-reserva.enum";
-import { Paquete } from "./paquete.model";
-import { Usuario } from "./usuario.model";
-
+import { EstadoReservaEnum } from '../enum/estado-reserva.enum';
 export interface ReservaResponse {
   id: number;
-  // usuario: Usuario;
-  // paquete: Paquete;
-  placaVehiculo:string;
-  modeloVehiculo:string;
-  numeroBoleta:string;
-  minutosReservados:number;
-  fechaReserva: Date;
-  estado: EstadoReservaEnum;
+  // IDs de referencia (para el servicio de validación)
+  clienteId: number;
+  vehiculoId: number;
 
+  numeroBoleta: string;
+  nombre: string;
+  apellido: string;
+  placaVehiculo: string;
+  modeloVehiculo: string;
+  minutosReservados: number;
+  fechaReserva: Date;
+  fechaFin: Date;
+  estado: EstadoReservaEnum;
 }

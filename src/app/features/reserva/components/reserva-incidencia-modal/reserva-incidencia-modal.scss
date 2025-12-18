@@ -1,0 +1,61 @@
+// Utiliza las paletas de Material Design si las tienes configuradas.
+$primary-color: var(--mat-primary-color, #1976d2);
+$warn-color: var(--mat-warn-color, #d32f2f);
+$text-color: var(--mat-text-color-default, #333);
+
+// BLOQUE: incidencia-form
+.incidencia-form {
+  display: block; // Estilo para el :host (si se aplica fuera o en el componente contenedor)
+
+  // ELEMENTO: __header
+  &__header {
+    display: flex;
+    align-items: center;
+    padding: 20px 24px 10px;
+    font-size: 22px;
+  }
+
+  // ELEMENTO: __icon (anidado)
+  &__icon--warn {
+    padding-right: 12px;
+    color: $warn-color;
+    font-size: 26px;
+  }
+
+  // ELEMENTO: __content
+  &__content {
+    padding: 30px 24px 20px;
+    overflow: hidden;
+  }
+
+  // ELEMENTO: __field (El mat-form-field contenedor)
+  &__field {
+    margin-top: 20px;
+    width: 100%;
+
+    // Estilos específicos para el textarea
+    textarea {
+      resize: vertical;
+      padding: 8px 0;
+    }
+  }
+
+  // ELEMENTO: __actions
+  &__actions {
+    padding: 8px 24px 24px;
+  }
+
+  // ELEMENTO: __button
+  &__button {
+    min-width: 100px;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &--primary {
+      font-weight: 500;
+    }
+  }
+}

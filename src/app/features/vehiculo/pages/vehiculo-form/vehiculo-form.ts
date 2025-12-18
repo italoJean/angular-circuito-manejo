@@ -1,16 +1,15 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators,NonNullableFormBuilder } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { VehiculoService } from '../../services/vehiculo.service';
 import { Vehiculo } from '../../model/vehiculo.model';
 import { MaterialModule } from "../../../../shared/ui/material-module";
 import { EstadoVehiculosEnum } from '../../enums/estado-vehiculo.enum';
 import { TipoTransmisionEnum } from '../../enums/tipo-transmision.enum';
-import {MatSelectModule} from '@angular/material/select';
 
 @Component({
   selector: 'app-vehiculo-form',
-  imports: [MatDialogContent, MaterialModule, MatDialogActions, ReactiveFormsModule, MatSelectModule],
+  imports: [ MaterialModule, ReactiveFormsModule],
   templateUrl: './vehiculo-form.html',
   styleUrl: './vehiculo-form.scss',
 })
@@ -67,4 +66,3 @@ export class VehiculoForm implements OnInit {
     this.dialogRef.close();
   }
 }
-

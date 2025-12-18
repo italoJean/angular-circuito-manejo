@@ -1,13 +1,23 @@
-<section>
-   <button mat-raised-button (click)="openCreateModal()">Nuevo Usuario</button>
-   
-  <app-grid
-    [displayedColumns]="displayedColumns"
-    [data]="data()"
-    [columnLabels]="columnLabels()"
-    [sortableColumns]="sortables"
-  (edit)="openEditModal($event)"
-    (delete)="deleteUsuario($event)"
-  ></app-grid>
-  
+<section class="usuario-management">
+
+  <div class="usuario-management__header">
+    <h2 class="usuario-management__title">Gestión de Usuarios</h2>
+
+    <button mat-raised-button color="primary" class="usuario-management__button-add"
+      (click)="openCreateModal()">
+      <mat-icon>add_circle</mat-icon>
+      Nuevo Usuario
+    </button>
+  </div>
+
+      <app-grid
+      [displayedColumns]="displayedColumns"
+      [data]="data()"
+      [columnLabels]="columnLabels()"
+      [sortableColumns]="sortables"
+      [pipesMap]="{  fechaRegistro: 'date'  }"
+      (edit)="openEditModal($event)"
+      (delete)="deleteUsuario($event)"
+    ></app-grid>
+
 </section>
