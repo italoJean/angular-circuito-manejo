@@ -52,11 +52,11 @@ export class Home {
       route: '/dashboard/reserva/reservas',
       icon: 'event'
     },
-    {
-      Title:'Articles',
-      description:'This is the module for Articles',
-      traits: ['charming','graceful','sassy'],
-      route:'/dashboard/article/articles',
-    },
+    // {
+    //   Title:'Articles',
+    //   description:'This is the module for Articles',
+    //   traits: ['charming','graceful','sassy'],
+    //   route:'/dashboard/article/articles',
+    // },
   ]
 }
