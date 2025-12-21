@@ -18,6 +18,7 @@
       [pipesMap]="{ duracionMinutos: 'minutosHoras', precioTotal: 'currency' }"
       (edit)="openEditModal($event)"
       (delete)="deletePaquete($event)"
+      (refresh)="loadPaquetes()"
     ></app-grid>
 
 </section>

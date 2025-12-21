@@ -45,6 +45,21 @@ export class Grid<T> implements OnInit {
   @Output() edit = new EventEmitter<T>();
   @Output() delete = new EventEmitter<T>();
 
+  
+  // 🚩 Nuevo output para avisar al componente padre que debe recargar los datos de la API
+  @Output() refresh = new EventEmitter<void>();
+
+
+  
+  handleRefresh(): void {
+    // 1. Limpiamos el filtro si lo deseas al refrescar
+    this.valueToFilter.set('');
+    
+    // 2. Emitimos al padre para que vuelva a llamar al servicio
+    this.refresh.emit();
+  }
+
+  
 // 🚨 Definir el nuevo input para el mapa de pipes
 pipesMap = input<Record<string, 'minutosHoras' | 'currency' | 'date' | string>>({});
 

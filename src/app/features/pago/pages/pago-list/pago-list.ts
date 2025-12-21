@@ -43,7 +43,7 @@ export class PagoList implements OnInit{
 ];
 
   // ✅ Columnas ordenables (solo algunas)
-  sortables: Array<string> = ['id', 'fechaPago', 'estado', 'monto'] as const;
+  sortables: Array<string> = ['id', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 'fechaPago', 'estado', 'monto','tipoPago'] as const;
 
   // ✅ Etiquetas de las columnas (Signal)
   readonly columnLabels = signal<Record<string, string>>({

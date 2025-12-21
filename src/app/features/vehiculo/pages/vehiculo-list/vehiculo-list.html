@@ -17,6 +17,7 @@
       [sortableColumns]="sortables"
       (edit)="openEditModal($event)"
       (delete)="deleteVehiculo($event)"
+      (refresh)="loadVehiculos()"
     ></app-grid>
 
 </section>

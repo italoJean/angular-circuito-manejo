@@ -1,0 +1,8 @@
+ :host ::ng-deep .fc {
+      max-width: 100%;
+      height: auto;
+    }
+    /* Estilos para mejorar el toque en móvil */
+    :host ::ng-deep .fc-timegrid-slot {
+      height: 3em !important; 
+    }

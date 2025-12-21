@@ -23,25 +23,33 @@
 
   <div class="form__toggle-group">
     <span class="form__toggle-label">Duración registrada en:</span>
-    <mat-slide-toggle (change)="toggleMode()" [checked]="isHours" color="primary"> Horas </mat-slide-toggle>
+    <mat-slide-toggle (change)="toggleMode()" [checked]="isHours" [disabled]="isDuracionBloqueada"> Horas </mat-slide-toggle>
   </div>
 
   @if (!isHours) {
-  <mat-form-field appearance="outline" class="form__field form__field--fade">
-    <mat-label>Duración (minutos)</mat-label>
-    <mat-icon matPrefix class="form__icon">timer</mat-icon>
-    <input matInput type="number" formControlName="duracionMinutos" />
-  </mat-form-field>
-  }
+<mat-form-field appearance="outline" class="form__field form__field--fade">
+<mat-label>Duración (minutos)</mat-label>
+<mat-icon matPrefix class="form__icon">timer</mat-icon>
+<input matInput type="number" formControlName="duracionMinutos" />
+@if (isDuracionBloqueada) {
+<mat-hint style="color: #f44336; font-weight: 500;">
+No editable: existen pagos asociados a este paquete.
+</mat-hint>
+}
+</mat-form-field>
+} @else {
+<mat-form-field appearance="outline" class="form__field form__field--fade">
+<mat-label>Duración (horas)</mat-label>
+<mat-icon matPrefix class="form__icon">schedule</mat-icon>
+<input matInput type="number" formControlName="duracionHoras" />
+@if (isDuracionBloqueada) {
+<mat-hint style="color: #f44336; font-weight: 500;">
+No editable: existen pagos asociados a este paquete.
+</mat-hint>
+}
+</mat-form-field>
+}
 
-  @if (isHours) {
-  <mat-form-field appearance="outline" class="form__field form__field--fade">
-    <mat-label>Duración (horas)</mat-label>
-    <mat-icon matPrefix class="form__icon">schedule</mat-icon>
-    <input matInput type="number" formControlName="duracionHoras" />
-  </mat-form-field>
-
-  }
 
   <div class="form__section-title">Precio Total</div>
   <mat-form-field appearance="outline" class="form__field">

@@ -35,7 +35,7 @@ export class VehiculoList implements OnInit {
     'estado',
     'action',
   ];
-  sortables: Array<keyof Vehiculo> = ['id', 'placa', 'marca', 'modelo'] as const;
+  sortables: Array<keyof Vehiculo> = ['id', 'placa', 'marca', 'modelo', 'tipoTransmision', 'estado'] as const;
 
   readonly columnLabels = signal<Record<string, string>>({
     id: 'ID',

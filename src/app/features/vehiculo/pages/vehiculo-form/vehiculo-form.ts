@@ -29,28 +29,62 @@ export class VehiculoForm implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data?: Vehiculo
   ) {}
 
+
+
+  
+  /**
+   * 🚩 Lógica Dinámica de Estados:
+   * - Si es DISPONIBLE, muestra [DISPONIBLE, MANTENIMIENTO].
+   * - Si es MANTENIMIENTO, muestra [MANTENIMIENTO, DISPONIBLE].
+   * - Nunca muestra RESERVADO como opción elegible.
+   */
+  get opcionesEstado(): string[] {
+    const estadoActual = this.data?.estado;
+    
+    if (this.isEditing) {
+      if (estadoActual === EstadoVehiculosEnum.DISPONIBLE) {
+        return [EstadoVehiculosEnum.DISPONIBLE, EstadoVehiculosEnum.MANTENIMIENTO];
+      }
+      if (estadoActual === EstadoVehiculosEnum.MANTENIMIENTO) {
+        return [EstadoVehiculosEnum.MANTENIMIENTO, EstadoVehiculosEnum.DISPONIBLE];
+      }
+      // Si por alguna razón está RESERVADO, solo mostramos su estado actual (estará deshabilitado)
+      return [estadoActual!];
+    }
+    
+    return [EstadoVehiculosEnum.DISPONIBLE];
+  }
+
+
+
   ngOnInit(): void {
+    this.isEditing = !!this.data;
+    const estadoInicial = this.data?.estado || EstadoVehiculosEnum.DISPONIBLE;
+
     this.form = this.fb.group({
       id: [this.data?.id],
       placa: [this.data?.placa || '', Validators.required],
       marca: [this.data?.marca || '', Validators.required],
       modelo: [this.data?.modelo || '', Validators.required],
-      // Inicializa con el primer valor del enum si no hay datos
-      tipoTransmision: [this.data?.tipoTransmision || '', Validators.required], 
-      // estado: [this.data?.estado || '', Validators.required],
-      // 👇 solo se usa para edición; al crear, se asigna por defecto
-      estado: [this.data?.estado || EstadoVehiculosEnum.DISPONIBLE],
-
+      tipoTransmision: [this.data?.tipoTransmision || '', Validators.required],
+      estado: [estadoInicial]
     });
 
-    this.isEditing = !!this.data;
-
+    /**
+     * 🚩 Bloqueo de Control:
+     * El estado solo se puede editar si NO es RESERVADO.
+     */
+    if (this.isEditing && estadoInicial === EstadoVehiculosEnum.RESERVADO) {
+      this.form.get('estado')?.disable();
+    }
   }
+
 
   save(): void {
     if (this.form.invalid) return;
 
-    const vehiculo = this.form.value as Vehiculo;
+    // const vehiculo = this.form.value as Vehiculo;
+    const vehiculo = this.form.getRawValue() as Vehiculo;
 
     const request$ = this.isEditing
       ? this.vehiculoService.update(vehiculo.id!, vehiculo)

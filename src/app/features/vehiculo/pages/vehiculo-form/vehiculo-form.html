@@ -37,18 +37,27 @@
       </mat-select>
     </mat-form-field>
 
-  @if (isEditing) {
-    <div class="form__section-title">Estado</div>
-    <mat-form-field appearance="outline" class="form__field form__field--select">
-      <mat-label>Estado</mat-label>
-      <mat-icon matPrefix class="form__icon">traffic</mat-icon>
-      <mat-select formControlName="estado">
-        @for (estado of estadoVehiculos; track $index) {
-          <mat-option [value]="estado">{{ estado }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
+ 
+      @if (isEditing) {
+        <div class="form__section-title">
+          Estado 
+          @if (form.get('estado')?.disabled) {
+            <span style="font-size: 0.7em; color: #e74c3c; margin-left: 8px;">(Bloqueado: Vehículo Reservado)</span>
+          }
+        </div>
+        <mat-form-field appearance="outline" class="form__field form__field--select">
+          <mat-label>Estado</mat-label>
+          <mat-icon matPrefix class="form__icon">traffic</mat-icon>
+          <mat-select formControlName="estado">
+            @for (est of opcionesEstado; track est) {
+              <mat-option [value]="est">{{ est }}</mat-option>
+            }
+          </mat-select>
+          @if (form.get('estado')?.disabled) {
+            <mat-hint>No se puede cambiar el estado de un vehículo con reserva activa.</mat-hint>
+          }
+        </mat-form-field>
+      }
   
 </mat-dialog-content>
 

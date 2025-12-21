@@ -1,4 +1,15 @@
-<mat-form-field appearance="outline" class="filter__field">
-  <mat-label>{{ label() }}</mat-label> <mat-icon matPrefix class="filter__icon">search</mat-icon>
-  <input matInput [(ngModel)]="filter" [placeholder]="placeholder()" #input />
-</mat-form-field>
+<div class="filter-container">
+      <mat-form-field appearance="outline" class="filter__field">
+        <mat-label>{{ label() }}</mat-label> 
+        <mat-icon matPrefix class="filter__icon">search</mat-icon>
+        <input matInput [(ngModel)]="filter" [placeholder]="placeholder()" #input />
+      </mat-form-field>
+
+      <button 
+        mat-fab 
+        class="refresh-btn" 
+        (click)="onRefresh.emit()"
+        matTooltip="Actualizar datos">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>

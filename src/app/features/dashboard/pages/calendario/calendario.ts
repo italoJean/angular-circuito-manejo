@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FullCalendar } from '../../../../shared/components/full-calendar/full-calendar';
 import { ReservaService } from '../../../reserva/services/reserva.service';
 import { ReservaResponse } from '../../../reserva/model/reserva-response.model';
@@ -8,12 +8,14 @@ import { NotificacionService } from '../../../../shared/services/notificacion.se
 import { ReservaDetalleModal } from '../../../reserva/components/reserva-detalle-modal/reserva-detalle-modal';
 import { HorarioOcupadoDTO } from '../../../reserva/model/event/horario-ocupado.model';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MaterialModule } from "../../../../shared/ui/material-module";
 
 @Component({
   selector: 'app-calendario',
-  imports: [FullCalendar,MatProgressSpinnerModule],
+  imports: [FullCalendar, MatProgressSpinnerModule, MaterialModule],
   templateUrl: './calendario.html',
   styleUrl: './calendario.scss',
+  
 })
 export class Calendario implements OnInit {
   private readonly reservaService = inject(ReservaService);
@@ -22,9 +24,8 @@ export class Calendario implements OnInit {
   private readonly notificacionService = inject(NotificacionService);
 
   // Lista de reservas que se pasará al componente hijo
-  reservas: HorarioOcupadoDTO[] = [];
-
-  public isLoading: boolean = true;
+  reservas = signal<HorarioOcupadoDTO[]>([]);
+  isLoading = signal<boolean>(true);
 
   ngOnInit(): void {
     this.cargarReservas();
@@ -32,17 +33,18 @@ export class Calendario implements OnInit {
 
   cargarReservas(): void {
 
+    this.isLoading.set(true);
     this.reservaService
       .findAllCalendario()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: HorarioOcupadoDTO[]) => {
-          this.reservas = data; //  Asigna la data. Esto dispara ngOnChanges en el componente hijo.
-          // this.isLoading = false; // Oculta la carga
+          this.reservas.set(data); // El Signal notifica automáticamente al componente hijo
+          this.isLoading.set(false);
         },
         error: (err) => {
           console.error('Error al cargar reservas:', err);
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.notificacionService.error('Error al cargar las reservas existentes.');
         },
       });

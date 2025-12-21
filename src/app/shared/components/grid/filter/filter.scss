@@ -1,0 +1,13 @@
+.filter-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .filter__field {
+      flex: 1;
+    }
+    .refresh-btn {
+      height: 56px; /* Para alinear con la altura del form-field outline */
+      margin-bottom: 22px; /* Ajuste según el padding del mat-form-field */
+    }

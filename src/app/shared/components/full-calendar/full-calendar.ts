@@ -68,8 +68,8 @@ export class FullCalendar implements OnInit, OnChanges, AfterViewInit {
   private readonly notificacionService = inject(NotificacionService);
 
   private estadoColors: Record<string, { bg: string; border: string }> = {
-    RESERVADO: { bg: '#4dabf7', border: '#1864ab' },
-    EN_PROGRESO: { bg: '#ffd43b', border: '#d9a400' },
+    RESERVADO: { bg: '#4dabf7', border: '#1864ab' }, //CELESTE
+    EN_PROGRESO: { bg: '#ffd43b', border: '#d9a400' },//AMARIILLO
     CANCELADO: { bg: '#ff6b6b', border: '#c92a2a' },
     FINALIZADO: { bg: '#51cf66', border: '#2b8a3e' },
   };
@@ -108,8 +108,21 @@ ngAfterViewInit(): void {
     this.calendarOptions = {
       plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
       initialView: 'timeGridWeek',
+      
+      // --- CONFIGURACIÓN PARA MÓVILES ---
       selectable: this.selectable,
       selectMirror: this.selectable,
+      unselectAuto: true,
+      
+      // Retraso para distinguir scroll de selección (350ms es el estándar móvil)
+      longPressDelay: 350, 
+      eventLongPressDelay: 350,
+      selectLongPressDelay: 350,
+      
+      // Mejora la visualización en pantallas pequeñas
+      handleWindowResize: true,
+      windowResizeDelay: 100,
+      
       allDaySlot: false,
       slotDuration: '00:30:00',
       headerToolbar: {
@@ -123,6 +136,16 @@ ngAfterViewInit(): void {
 
       select: this.selectable ? this.onSelect.bind(this) : undefined,
       eventClick: this.onEventClick.bind(this),// Asigna la función para manejar el clic en eventos.
+
+      // Opcional: ajustar el encabezado para móviles
+      views: {
+        timeGridWeek: {
+          titleFormat: { year: 'numeric', month: 'short', day: 'numeric' }
+        },
+        timeGridDay: {
+          titleFormat: { month: 'long', day: 'numeric' }
+        }
+      }
     };
   }
 

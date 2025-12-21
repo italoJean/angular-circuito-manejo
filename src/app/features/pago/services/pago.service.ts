@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
 import { Observable } from 'rxjs';
 import { PagoContadoRequestDTO } from '../model/pago-contado.request.model';
 import { PagoCuotasRequestDTO } from '../model/pago-cuotas.request.model';
 import { PagoListadoResponseDTO } from '../model/pago-listado.response.model';
 import { PagoDetalleResponseDTO } from '../model/pago-detalle.response.model';
 import { MetodoPagoEnum } from '../enum/metodo-pago.enum';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',

@@ -1,4 +1,4 @@
-import { Component, input, model } from '@angular/core';
+import { Component, input, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -16,4 +16,6 @@ export class Filter {
   filter=model('');
   label=input<string>('Filter');
   placeholder=input<string>('Ex. name');
+
+  onRefresh = output<void>();
 }

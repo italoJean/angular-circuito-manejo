@@ -29,12 +29,140 @@ interface ReprogramarData {
 
 @Component({
   selector: 'app-reserva-reprogramar-modal',
-  imports: [MaterialModule, CommonModule, ReactiveFormsModule, DatePipe],
+  imports: [MaterialModule, CommonModule, ReactiveFormsModule,DatePipe],
   templateUrl: './reserva-reprogramar-modal.html',
   styleUrl: './reserva-reprogramar-modal.scss',
 })
 export class ReservaReprogramarModal {
-  private readonly fb = inject(FormBuilder);
+//   private readonly fb = inject(FormBuilder);
+//   private readonly dialogRef = inject(MatDialogRef<ReservaReprogramarModal>);
+//   private readonly reservaService = inject(ReservaService);
+//   private readonly vehiculoService = inject(VehiculoService);
+//   private readonly notificacionService = inject(NotificacionService);
+//   private readonly dialog = inject(MatDialog);
+
+//   public reservaId: number;
+//   public reservaOriginal: DetalleReservaResponse | null = null;
+//   public form!: FormGroup;
+  
+//   // --- ESTADOS DE CONTROL ---
+//   public isLoading = signal<boolean>(true); // Usamos signals para mejor detección
+//   public isSaving = signal<boolean>(false); // Separamos la carga inicial del guardado
+
+//   vehiculos = signal<Vehiculo[]>([]);
+//   filtroVehiculo = signal('');
+
+//   constructor(@Inject(MAT_DIALOG_DATA) public data: ReprogramacionRequestDTO) {
+//     this.reservaId = data.id;
+//   }
+
+//   ngOnInit(): void {
+//     this.initForm();
+//     this.loadVehiculos();
+//     this.loadDetalleReserva();
+//   }
+
+//   initForm(): void {
+//     this.form = this.fb.group({
+//       vehiculoId: ['', Validators.required],
+//       fechaReserva: ['', Validators.required],
+//       minutosReservados: ['', [Validators.required, Validators.min(1)]],
+//     });
+//   }
+
+//   loadVehiculos() {
+//     this.vehiculoService.findAllOperativos().subscribe({
+//       next: (v) => this.vehiculos.set(v),
+//       error: () => this.notificacionService.error('Error al cargar vehículos')
+//     });
+//   }
+
+//   get vehiculosFiltrados(): Vehiculo[] {
+//     const filtro = this.filtroVehiculo().toLowerCase();
+//     return this.vehiculos().filter(v => 
+//       v.placa.toLowerCase().includes(filtro) || v.marca.toLowerCase().includes(filtro)
+//     );
+//   }
+
+//   loadDetalleReserva(): void {
+//     this.isLoading.set(true);
+//     this.reservaService.findByIdDetalle(this.reservaId).subscribe({
+//       next: (original) => {
+//         this.reservaOriginal = original;
+//         this.form.patchValue({ vehiculoId: original.vehiculo.id });
+//         this.isLoading.set(false);
+//       },
+//       error: () => {
+//         this.notificacionService.error('Error cargando detalles.');
+//         this.isLoading.set(false);
+//       }
+//     });
+//   }
+
+//   openCalendarDialog(): void {
+//     const vehiculoId = this.form.get('vehiculoId')?.value;
+//     const pagoId = this.reservaOriginal?.pago?.id;
+
+//     if (!vehiculoId) {
+//       this.notificacionService.error('Por favor, seleccione un vehículo primero.');
+//       return;
+//     }
+
+//     const dialogRef = this.dialog.open(CalendarSelectorDialog, {
+//       width: '90%',
+//       maxWidth: '800px',
+//       data: { vehiculoId, pagoId }
+//     });
+
+//     dialogRef.afterClosed().subscribe(result => {
+//       if (result) {
+//         this.form.patchValue({
+//           fechaReserva: result.fechaReserva,
+//           minutosReservados: result.minutosReservados
+//         });
+//         this.form.markAsDirty();
+//       }
+//     });
+//   }
+
+//   save(): void {
+//     // REGLA DE ORO: Si ya está guardando o el form es inválido, salimos inmediatamente
+//     if (this.isSaving() || this.form.invalid) {
+//       return;
+//     }
+
+//     // Bloqueamos el estado
+//     this.isSaving.set(true);
+
+//     const { vehiculoId, fechaReserva, minutosReservados } = this.form.getRawValue();
+
+//     const dto: ReprogramacionRequestDTO = {
+//       id: this.reservaId,
+//       vehiculoId: vehiculoId,
+//       nuevaFecha: fechaReserva,
+//       minutosReservados: minutosReservados
+//     };
+
+//     // Llamada al servicio con manejo de "limpieza" de bandera al terminar
+//     this.reservaService.reprogramar(this.reservaId, dto).subscribe({
+//       next: (res) => {
+//         this.notificacionService.success('✅ Reserva reprogramada exitosamente!');
+//         this.dialogRef.close(res);
+//       },
+//       error: (err) => {
+//         this.isSaving.set(false); // Desbloqueamos solo en caso de error
+//         const msg = err.error?.message || 'Error al reprogramar.';
+//         this.notificacionService.error(msg);
+//       }
+//     });
+//   }
+
+//   close(): void {
+//     this.dialogRef.close();
+//   }
+// }
+
+ private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<ReservaReprogramarModal>);
   private readonly reservaService = inject(ReservaService);
   private readonly vehiculoService = inject(VehiculoService);

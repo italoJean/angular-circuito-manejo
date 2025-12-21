@@ -17,6 +17,9 @@ export class PaqueteForm implements OnInit {
   form!: FormGroup;
   isEditing = false;
   isHours = false;
+  // 🚩 Nueva propiedad para controlar el bloqueo
+  isDuracionBloqueada = false;
+
 
   private readonly paqueteService = inject(PaqueteService);
   private readonly fb = inject(FormBuilder);
@@ -25,23 +28,36 @@ export class PaqueteForm implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data?: Paquete) {}
 
   ngOnInit(): void {
+    this.isEditing = !!this.data;
+
     this.form = this.fb.group({
       id: [this.data?.id],
       nombre: [this.data?.nombre || '', Validators.required],
       descripcion: [this.data?.descripcion || ''], 
-
-      // por defecto minutos
       duracionMinutos: [this.data?.duracionMinutos || '', Validators.required],
       duracionHoras: [''],
-
       precioTotal: [this.data?.precioTotal || '', Validators.required],
     });
 
-    this.isEditing = !!this.data;
+    // 🚩 Llamada a tu nuevo servicio si estamos editando
+    if (this.isEditing && this.data?.id) {
+      this.paqueteService.tienePagos(this.data.id).subscribe({
+        next: (tienePagos) => {
+          this.isDuracionBloqueada = tienePagos;
+          if (tienePagos) {
+            // Deshabilitamos campos de tiempo y toggle
+            this.form.get('duracionMinutos')?.disable();
+            this.form.get('duracionHoras')?.disable();
+          }
+        },
+        error: (err) => console.error('Error verificando pagos:', err)
+      });
+    }
   }
 
   // Cambiar entre MINUTOS ↔ HORAS
   toggleMode(): void {
+    if (this.isDuracionBloqueada) return; // Seguridad extra
     this.isHours = !this.isHours;
 
     if (this.isHours) {
@@ -73,11 +89,11 @@ export class PaqueteForm implements OnInit {
 
   save(): void {
     if (this.form.invalid) return;
-
-    let paquete = this.form.value as any;
+ // 🚩 Usamos getRawValue() para capturar duracionMinutos aunque esté disabled
+    let paquete = this.form.getRawValue() as any;
 
     // Convertir siempre a minutos antes de guardar
-    if (this.isHours) {
+    if (this.isHours && !this.isDuracionBloqueada) {
       paquete.duracionMinutos = paquete.duracionHoras * 60;
     }
 

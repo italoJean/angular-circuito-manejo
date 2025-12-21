@@ -3,6 +3,8 @@
     [label]="'Filter...'"
     [placeholder]="'Search....'"
     [(filter)]="valueToFilter"
+    
+    (onRefresh)="handleRefresh()"
   ></app-filter>
 
   <div class="table-wrapper">

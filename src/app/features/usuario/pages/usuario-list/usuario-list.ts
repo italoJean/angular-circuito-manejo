@@ -28,7 +28,7 @@ private readonly destroyRef = inject(DestroyRef);
   data = signal<Usuario[]>([]);
 
   displayedColumns: Array<keyof Usuario | 'action'> = ['id', 'nombre', 'apellido', 'tipoDocumento', 'numeroDocumento','telefono', 'email','fechaRegistro' , 'action'];
-  sortables: Array<keyof Usuario> = ['id', 'nombre', 'apellido', 'tipoDocumento', 'numeroDocumento'] as const;
+  sortables: Array<keyof Usuario> = ['id', 'nombre', 'apellido', 'tipoDocumento','fechaRegistro', 'numeroDocumento'] as const;
 
 
     readonly columnLabels = signal<Record<string, string>>({

@@ -17,6 +17,7 @@
       [pipesMap]="{  
       monto: 'currency',fechaPago: 'date'  }"
     (reservas)="onViewReservas($event)" 
-    (details)="onViewDetails($event)">
+    (details)="onViewDetails($event)"
+    (refresh)="loadPagos()">
   </app-grid>
 </section>

@@ -1,24 +1,42 @@
-<section class="calendario-container">
-    <div class="header">
-        <h2 class="title">Lista de Reservas</h2>
+<section class="calendario-management">
+  <div class="calendario-management__header">
+    <div class="calendario-management__title-group">
+      <h2 class="calendario-management__title">Lista de Reservas</h2>
     </div>
 
-    @if (!isLoading) {
-        <p>Cargando reservas...</p> 
-        <!-- <mat-spinner></mat-spinner> -->
-      <mat-spinner diameter="80"></mat-spinner>
+    <!-- Bloque de Leyenda añadido -->
+    <div class="calendario-management__legend">
+      <div class="legend-item">
+        <span class="legend-item__dot legend-item__dot--blue"></span>
+        <span class="legend-item__text">Reservado</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-item__dot legend-item__dot--yellow"></span>
+        <span class="legend-item__text">En Progreso</span>
+      </div>
+      <!-- <div class="legend-item">
+        <span class="legend-item__dot legend-item__dot--gray"></span>
+        <span class="legend-item__text">Finalizado</span>
+      </div> -->
+    </div>
+  </div>
 
+  <div class="calendario-management__content">
+    @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p>Cargando reservas...</p>
+    </div>
     } @else {
-
-    
-
-    <app-full-calendar #calendar
-        [reservas]="reservas"
-        [selectable]="false"
-        [isValidSelection]="true"
-        validationMessage="Modo solo lectura: Haz clic en un evento para ver detalles."
-        (eventClicked)="handleEventClick($event)"> 
+    <app-full-calendar
+      #calendar
+      [reservas]="reservas()"
+      [selectable]="false"
+      [isValidSelection]="true"
+      validationMessage="Modo solo lectura: Haz clic en un evento para ver detalles."
+      (eventClicked)="handleEventClick($event)"
+    >
     </app-full-calendar>
-}
-
+    }
+  </div>
 </section>

@@ -34,7 +34,7 @@ export class ReservaList implements OnInit{
   ];
 
   // ✅ Columnas ordenables (solo algunas)
-  sortables: Array<string> = ['id', 'fechaReserva', 'estado'] as const;
+  sortables: Array<string> = ['id','nombre','apellido','placaVehiculo', 'modeloVehiculo', 'fechaReserva', 'fechaFin','minutosReservados', 'estado'] as const;
 
   // ✅ Etiquetas de las columnas (Signal)
   readonly columnLabels = signal<Record<string, string>>({
