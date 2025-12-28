@@ -53,22 +53,3 @@ export class AuthService {
       });
   }
 }
-//   private _currentUser = signal<any>(null); // Guardamos el usuario en un signal
-//   getUserInfo() {
-//     // Este endpoint lo creas en tu Controller de Spring
-//     return this.http.get(`${environment.API_URL}/user-info`, { withCredentials: true });
-//   }
-
-
-//   logout() {
-//     return this.http.post(`${environment.API_URL}/logout`, {}, { withCredentials: true })
-//       .subscribe({
-//         next: () => {
-//           // Una vez borrada la sesión en el servidor, limpiamos el Front
-//           this.router.navigate(['/auth/login']);
-//         },
-//         error: (err) => console.error('Error al cerrar sesión', err)
-//       });
-//   }
-
-// }
