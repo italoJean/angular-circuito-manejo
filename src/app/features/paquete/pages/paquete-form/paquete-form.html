@@ -4,65 +4,71 @@
 </h2>
 
 <mat-dialog-content [formGroup]="form" class="modal__body form">
-  
   <div class="form__section-title">Nombre del Paquete</div>
-
   <mat-form-field appearance="outline" class="form__field">
     <mat-label>Nombre</mat-label>
     <mat-icon matPrefix class="form__icon">label_important</mat-icon>
     <input matInput formControlName="nombre" />
+    @if (form.get('nombre')?.invalid) {
+    <mat-error>{{ getErrorMessage('nombre') }}</mat-error>
+    }
   </mat-form-field>
 
-  
   <div class="form__section-title">Descripción</div>
   <mat-form-field appearance="outline" class="form__field">
     <mat-label>Descripción</mat-label>
     <mat-icon matPrefix class="form__icon">notes</mat-icon>
-    <input matInput formControlName="descripcion" />
+    <textarea matInput formControlName="descripcion" rows="2"></textarea>
+    @if (form.get('descripcion')?.invalid) {
+    <mat-error>{{ getErrorMessage('descripcion') }}</mat-error>
+    }
   </mat-form-field>
 
   <div class="form__toggle-group">
     <span class="form__toggle-label">Duración registrada en:</span>
-    <mat-slide-toggle (change)="toggleMode()" [checked]="isHours" [disabled]="isDuracionBloqueada"> Horas </mat-slide-toggle>
+    <mat-slide-toggle (change)="toggleMode()" [checked]="isHours" [disabled]="isDuracionBloqueada">
+      {{ isHours ? 'Horas' : 'Minutos' }}
+    </mat-slide-toggle>
   </div>
 
-  @if (!isHours) {
-<mat-form-field appearance="outline" class="form__field form__field--fade">
-<mat-label>Duración (minutos)</mat-label>
-<mat-icon matPrefix class="form__icon">timer</mat-icon>
-<input matInput type="number" formControlName="duracionMinutos" />
-@if (isDuracionBloqueada) {
-<mat-hint style="color: #f44336; font-weight: 500;">
-No editable: existen pagos asociados a este paquete.
-</mat-hint>
-}
-</mat-form-field>
-} @else {
-<mat-form-field appearance="outline" class="form__field form__field--fade">
-<mat-label>Duración (horas)</mat-label>
-<mat-icon matPrefix class="form__icon">schedule</mat-icon>
-<input matInput type="number" formControlName="duracionHoras" />
-@if (isDuracionBloqueada) {
-<mat-hint style="color: #f44336; font-weight: 500;">
-No editable: existen pagos asociados a este paquete.
-</mat-hint>
-}
-</mat-form-field>
-}
+  <mat-form-field appearance="outline" class="form__field form__field--fade">
+    <mat-label>{{ isHours ? 'Duración (horas)' : 'Duración (minutos)' }}</mat-label>
+    <mat-icon matPrefix class="form__icon">{{ isHours ? 'schedule' : 'timer' }}</mat-icon>
 
+    @if (!isHours) {
+    <input matInput type="number" formControlName="duracionMinutos" inputmode="numeric" />
+    } @else {
+    <input matInput type="number" formControlName="duracionHoras" inputmode="numeric"/>
+    } @if (form.get(isHours ? 'duracionHoras' : 'duracionMinutos')?.invalid) {
+
+    <mat-error>
+      {{ getErrorMessage(isHours ? 'duracionHoras' : 'duracionMinutos') }}
+    </mat-error>
+    } @if (isDuracionBloqueada) {
+    <mat-hint class="hint-error">Bloqueado: existen pagos asociados.</mat-hint>
+    }
+  </mat-form-field>
 
   <div class="form__section-title">Precio Total</div>
   <mat-form-field appearance="outline" class="form__field">
     <mat-label>Precio Total</mat-label>
     <mat-icon matPrefix class="form__icon">attach_money</mat-icon>
-    <input matInput type="number" formControlName="precioTotal" />
+    <input matInput type="number" formControlName="precioTotal" step="0.01" inputmode="numeric"/>
+    @if (form.get('precioTotal')?.invalid) {
+    <mat-error>{{ getErrorMessage('precioTotal') }}</mat-error>
+    }
   </mat-form-field>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="modal__actions">
-  <button mat-button (click)="close()">Cancelar</button>
-  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid">
-      <mat-icon>save</mat-icon>
+  <button mat-button (click)="close()" [disabled]="loading">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || loading">
+    <mat-icon>save</mat-icon>
+    @if (loading) {
+    <mat-spinner diameter="18" style="margin-right: 8px; display: inline-block"></mat-spinner>
+    Enviando... } @else {
+
     {{ isEditing ? 'Actualizar' : 'Guardar' }}
+    }
   </button>
 </mat-dialog-actions>

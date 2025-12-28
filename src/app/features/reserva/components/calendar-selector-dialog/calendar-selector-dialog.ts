@@ -39,174 +39,8 @@ interface CalendarDialogData {
   styleUrl: './calendar-selector-dialog.scss',
 })
 export class CalendarSelectorDialog implements OnInit {
-  /*
-  private dialogRef = inject(MatDialogRef<CalendarSelectorDialog>);
-  private readonly validationService = inject(CalendarValidationService);
-  private readonly reservaService = inject(ReservaService); // Para obtener todas las reservas
-  private readonly vehiculoService = inject(VehiculoService);
-    private readonly modalService = inject(ModalService);
-      private readonly notificacionService = inject(NotificacionService);
-      
-  public data = inject<CalendarDialogData>(MAT_DIALOG_DATA);
-
   
-  // --- ESTADO CON SIGNALS ---
-  // Reemplazamos los arreglos por signals
-  public reservasVehiculo = signal<HorarioOcupadoDTO[]>([]);
-  public reservasCliente = signal<HorarioOcupadoDTO[]>([]);
-
-  
-  // Estado de UI
-  public isLoadingData = signal<boolean>(true);
-  public selectedDate = signal<string | null>(null);
-  public selectedDuration = signal<number>(0);
-  public isValidSelection = signal<boolean>(false);
-  public validationMessage = signal<string>('Seleccione una fecha y duración en el calendario.');
-
-
-  // Ejemplo de un Signal Computado (derivado de otros)
-  // Devuelve true si ambos signals tienen datos cargados
-  public tieneDatosCargados = computed(() => 
-    this.reservasVehiculo().length > 0 || this.reservasCliente().length > 0
-  );
-
-  // Reglas de negocio (ajusta estos valores según sea necesario)
-  private readonly rules: CalendarRulesConfig = {
-    businessHours: { start: 7, end: 19 },
-    minMinutes: 60,
-    maxMinutes: 300, // 5 horas
-    minAnticipationMinutes: 30,
-    maxAnticipationDays: 60,
-    maxSimultaneousReservations: 4, // Máximo 4 reservas totales a la vez
-  };
-
-
-  ngOnInit(): void {
-    this.loadReservasDual(this.data.vehiculoId, this.data.pagoId);
-  // 💡 Lógica Condicional: 
-  // Si recibimos las reservas ya cargadas (modo Reprogramar), las usamos directamente.
-  // if (this.data.reservasVehiculoInicial && this.data.reservasClienteInicial) {
-  //   this.reservasVehiculo = this.data.reservasVehiculoInicial;
-  //   this.reservasCliente = this.data.reservasClienteInicial;
-  //   this.isLoadingData = false;
-  // } else {
-  //   // Si no las recibimos (modo Crear/Inicial), las cargamos nosotros.
-  //   this.loadReservasDual(this.data.vehiculoId, this.data.pagoId);
-  // }
-  }
-
-  loadReservasDual(vehiculoId: number, pagoId: number): void {
-   this.isLoadingData.set(true);
-
-    forkJoin({
-      // 1. Horarios Ocupados del Vehículo (Usando vehiculoService)
-      vehiculoHorario: this.vehiculoService.getHorarioOcupado(vehiculoId).pipe(take(1)),
-      // 2. Horarios Ocupados del Cliente (Usando reservaService, asumiendo que el ID es del cliente)
-      clienteHorario: this.vehiculoService.getHorarioClientePago(pagoId).pipe(take(1)),
-    }).subscribe({
-      next: (results) => {
-        // Actualizamos los signals usando .set()
-        this.reservasVehiculo.set(results.vehiculoHorario);
-        this.reservasCliente.set(results.clienteHorario);
-        this.isLoadingData.set(false);
-      },
-      error: (err) => {
-        console.error('Error cargando horarios para validación:', err);
-        this.validationMessage.set('❌ Error al cargar horarios. Intente más tarde.');
-        this.isLoadingData.set(false);
-      },
-    });
-  }
-
-  // El calendario visual solo muestra los slots ocupados del vehículo
-  
-
-  handleEventClick(reservaId: number): void {
-      this.reservaService.findByIdDetalle(reservaId).subscribe({
-        next: (detalle) => {
-          //  Si la data llega, usa el servicio de modal para abrir la ventana de detalles
-          this.modalService
-            .openModal(ReservaDetalleModal, detalle, {
-              width: '650px',
-            })
-            .subscribe((result) => {
-              //  Maneja el resultado después de cerrar el modal
-              console.log('Modal cerrado con resultado:', result);
-            });
-        },
-        error: (err) => {
-          //  Muestra error si no se pudo cargar el detalle
-          console.error('Error obteniendo detalle de reserva:', err);
-          this.notificacionService.error('No se pudo cargar el detalle de la reserva.');
-        },
-      });
-    }
-  // FUNCIÓN CLAVE: Se llama cuando el FullCalendar emite una selección
-  onDateSelected(event: { start: string; end: string; minutes: number }) {
-    // Actualizamos el estado con signals
-    this.selectedDate.set(event.start);
-    this.selectedDuration.set(event.minutes);
-    this.isValidSelection.set(false);
-
-    this.validateSelection(new Date(event.start), new Date(event.end));
-  }
-
-
-  validateSelection(start: Date, end: Date): void {
-    let error: string | null = null;
-
-    // 1. Validaciones básicas
-    error = this.validationService.validateFutureTime(start) ||
-            this.validationService.validateBusinessHours(start, end, this.rules) ||
-            this.validationService.validateDuration(start, end, this.rules) ||
-            this.validationService.validateAnticipation(start, this.rules);
-
-    if (error) return this.handleValidationError(error);
-
-    // 2. Cruce de VEHÍCULO (Usando .get() o ejecutando el signal como función)
-    error = this.validationService.validateOverlapping(start, end, this.reservasVehiculo());
-    if (error) return this.handleValidationError('El vehículo ya está reservado en ese horario.');
-
-    // 3. Cruce de CLIENTE
-    error = this.validationService.validateOverlapping(start, end, this.reservasCliente());
-    if (error) return this.handleValidationError('Usted ya tiene otra reserva en este horario.');
-
-    // 4. Capacidad
-    error = this.validationService.validateMaxSimultaneous(start, end, this.reservasVehiculo(), this.rules);
-    if (error) return this.handleValidationError(`CAPACIDAD: ${error}`);
-
-    this.handleValidationSuccess(start);
-  }
-
-  private handleValidationError(message: string): void {
-     this.validationMessage.set(`❌ ERROR: ${message}`);
-    this.isValidSelection.set(false);
-  }
-
-  private handleValidationSuccess(start: Date): void {
-    const dateStr = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    this.validationMessage.set(`✅ Reserva válida: ${this.selectedDuration()} min a las ${dateStr}.`);
-    this.isValidSelection.set(true);
-  }
-
-  confirm() {
-    if (!this.isValidSelection() || !this.selectedDate()) return;
-
-    this.dialogRef.close({
-      fechaReserva: this.selectedDate,
-      minutosReservados: this.selectedDuration,
-    });
-  }
-
-  close() {
-    this.dialogRef.close(undefined);
-  }
-}
-
-*/
-
-
-
+  //
   private dialogRef = inject(MatDialogRef<CalendarSelectorDialog>);
   private readonly validationService = inject(CalendarValidationService);
   private readonly reservaService = inject(ReservaService); // Para obtener todas las reservas
@@ -225,31 +59,48 @@ export class CalendarSelectorDialog implements OnInit {
   public reservasVehiculo: HorarioOcupadoDTO[] = [];
   public reservasCliente: HorarioOcupadoDTO[] = [];
 
+  public horariosBloqueados: HorarioOcupadoDTO[] = [];
+
   // Reglas de negocio (ajusta estos valores según sea necesario)
   private readonly rules: CalendarRulesConfig = {
-    businessHours: { start: 7, end: 19 },
+    businessHours: { start: 6, end: 20 },
     minMinutes: 60,
     maxMinutes: 300, // 5 horas
-    minAnticipationMinutes: 30,
-    maxAnticipationDays: 60,
-    maxSimultaneousReservations: 4, // Máximo 4 reservas totales a la vez
+    minAnticipationMinutes: 1,
+    maxAnticipationDays: 20,
+    maxSimultaneousReservations: 8, // Máximo 4 reservas totales a la vez
   };
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: CalendarDialogData) {}
 
   ngOnInit(): void {
+    // this.loadReservas(this.data.vehiculoId, this.data.pagoId);
     this.loadReservasDual(this.data.vehiculoId, this.data.pagoId);
-  // 💡 Lógica Condicional: 
-  // Si recibimos las reservas ya cargadas (modo Reprogramar), las usamos directamente.
-  // if (this.data.reservasVehiculoInicial && this.data.reservasClienteInicial) {
-  //   this.reservasVehiculo = this.data.reservasVehiculoInicial;
-  //   this.reservasCliente = this.data.reservasClienteInicial;
-  //   this.isLoadingData = false;
-  // } else {
-  //   // Si no las recibimos (modo Crear/Inicial), las cargamos nosotros.
-  //   this.loadReservasDual(this.data.vehiculoId, this.data.pagoId);
-  // }
   }
+
+  //modifcar para que use solo un endpoint
+
+  loadReservas(vehiculoId: number, pagoId: number): void {
+  this.isLoadingData = true;
+
+  // Una sola llamada al nuevo endpoint
+  this.reservaService.getHorariosOcupados(vehiculoId, pagoId)
+    .pipe(take(1))
+    .subscribe({
+      next: (data: HorarioOcupadoDTO[]) => {
+        this.horariosBloqueados = data;
+        this.isLoadingData = false;
+        
+        // Opcional: Si necesitas imprimir para depurar
+        console.log(`Cargados ${data.length} horarios bloqueados (Vehículo + Cliente)`);
+      },
+      error: (err) => {
+        console.error('Error cargando horarios:', err);
+        this.validationMessage = 'Error al cargar disponibilidad. Intente más tarde.';
+        this.isLoadingData = false;
+      }
+    });
+}
 
   loadReservasDual(vehiculoId: number, pagoId: number): void {
     this.isLoadingData = true;
@@ -351,7 +202,7 @@ export class CalendarSelectorDialog implements OnInit {
       return;
     }
 
-    // B. Cruce de CLIENTE: Usamos validateOverlapping con reservasCliente
+    // // B. Cruce de CLIENTE: Usamos validateOverlapping con reservasCliente
     error = this.validationService.validateOverlapping(start, end, this.reservasCliente);
     if (error) {
       this.handleValidationError(
@@ -377,7 +228,7 @@ export class CalendarSelectorDialog implements OnInit {
   }
 
   private handleValidationError(message: string): void {
-    this.validationMessage = `❌ ERROR: ${message}`;
+    this.validationMessage = ` ERROR: ${message}`;
     this.isValidSelection = false;
   }
 
@@ -386,7 +237,7 @@ export class CalendarSelectorDialog implements OnInit {
       hour: '2-digit',
       minute: '2-digit',
     });
-    this.validationMessage = `✅ Reserva válida: ${this.selectedDuration} minutos a partir de las ${dateStr}.`;
+    this.validationMessage = ` Reserva válida: ${this.selectedDuration} minutos a partir de las ${dateStr}.`;
     this.isValidSelection = true;
   }
 

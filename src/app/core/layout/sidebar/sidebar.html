@@ -1,7 +1,7 @@
 <mat-nav-list>
   <mat-list-item routerLink="/dashboard/home" (click)="handleItemClick()" tabindex="-1" routerLinkActive="activelink" [routerLinkActiveOptions]="{ exact: true }">
     <span class="icon-and-text">
-      <mat-icon class="icon-margin">home</mat-icon> Home
+      <mat-icon class="icon-margin">home</mat-icon> Inicio
     </span>
   </mat-list-item>
   <mat-list-item routerLink="/dashboard/calendario" (click)="handleItemClick()" tabindex="-1" routerLinkActive="activelink" >
@@ -9,13 +9,13 @@
       <mat-icon class="icon-margin">table</mat-icon> Calendario
     </span>
   </mat-list-item>
-  <mat-list-item routerLink="/dashboard/drawer/list" (click)="handleItemClick()" tabindex="-1" routerLinkActive="activelink">
+  <mat-list-item routerLink="/dashboard/grafico" (click)="handleItemClick()" tabindex="-1" routerLinkActive="activelink">
     <span class="icon-and-text">
-      <mat-icon class="icon-margin">list</mat-icon> List
+      <mat-icon class="icon-margin">pie_chart</mat-icon> Gráfico
     </span>
   </mat-list-item>
 
-  <mat-nav-list>
+  <!-- <mat-nav-list>
     <mat-list-item (click)="toggleSubMenu('components')">
       <span class="icon-and-text">
         <mat-icon class="icon-margin">https</mat-icon> SubMenu
@@ -42,5 +42,5 @@
       </mat-list-item>
     </div>
     }
-  </mat-nav-list>
+  </mat-nav-list> -->
 </mat-nav-list>

@@ -17,15 +17,18 @@ import { EMPTY, switchMap } from 'rxjs';
   styleUrl: './vehiculo-list.scss',
 })
 export class VehiculoList implements OnInit {
+  // INYECCIÓN DE DEPENDENCIAS
   private readonly _modalService = inject(ModalService);
   private readonly _vehiculoService = inject(VehiculoService);
   private readonly _notificacionService = inject(NotificacionService);
   private readonly _dialogService = inject(DialogService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef); // Reemplaza el antiguo ngOnDestroy
 
-  // Usar signals para los datos
+  // REACTIVIDAD CON SIGNALS
+  // Usar signals permite que Angular detecte cambios de forma ultra-eficiente
   data = signal<Vehiculo[]>([]);
 
+  // Configuración de columnas para el componente reutilizable <app-grid>
   displayedColumns: Array<keyof Vehiculo | 'action'> = [
     'id',
     'placa',
@@ -35,7 +38,15 @@ export class VehiculoList implements OnInit {
     'estado',
     'action',
   ];
-  sortables: Array<keyof Vehiculo> = ['id', 'placa', 'marca', 'modelo', 'tipoTransmision', 'estado'] as const;
+
+  sortables: Array<keyof Vehiculo> = [
+    'id',
+    'placa',
+    'marca',
+    'modelo',
+    'tipoTransmision',
+    'estado',
+  ];
 
   readonly columnLabels = signal<Record<string, string>>({
     id: 'ID',
@@ -44,7 +55,7 @@ export class VehiculoList implements OnInit {
     modelo: 'Modelo',
     tipoTransmision: 'Tipo de Transmisión',
     estado: 'Estado',
-    action: 'Acción',
+    action: 'Acciones',
   });
 
   ngOnInit(): void {
@@ -52,17 +63,14 @@ export class VehiculoList implements OnInit {
   }
 
   loadVehiculos() {
-    this._vehiculoService.findAll().subscribe({
-      next: (vehiculos) => {
-        // Actualizar el signal con los nuevos datos
-        this.data.set(vehiculos);
-        // console.log('Vehiculos cargados:', vehiculos);
-      },
-      error: (error) => {
-        console.error('Error al cargar vehiculos:', error);
-        this._notificacionService.error('Error al cargar vehiculos');
-      },
-    });
+    // vinculamos la suscripción al ciclo de vida del componente
+    this._vehiculoService
+      .findAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (vehiculos) => this.data.set(vehiculos),
+        error: () => this._notificacionService.error('Error al conectar con el servidor'),
+      });
   }
 
   openCreateModal(): void {
@@ -70,6 +78,7 @@ export class VehiculoList implements OnInit {
       .openModal(VehiculoForm)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((nuevo) => {
+        // Solo recargamos si el modal devolvió un objeto (confirmación de guardado)
         if (nuevo) {
           this._notificacionService.success('Vehiculo creado correctamente');
           this.loadVehiculos();
@@ -89,35 +98,37 @@ export class VehiculoList implements OnInit {
       });
   }
 
+  /*
+   * PATRÓN DECLARATIVO (switchMap):
+   * Evita "Callback Hell". Primero confirma, y si el resultado es true,
+   * "cambia" el flujo hacia la petición de eliminación.
+  */
   deleteVehiculo(vehiculo: Vehiculo): void {
-    // 🚨 #ROBUSTNESS: Validación explícita en lugar de '!'
-    if (!vehiculo.id) {
-      this._notificacionService.error('ID de vehículo requerido para eliminar.');
-      return;
-    }
-    const vehiculoId = vehiculo.id;
+    if (!vehiculo.id) return;
 
-    // 🚨 #RXJS_DECLARATIVE: Usar switchMap para encadenar los observables
     this._dialogService
-      .confirm('Eliminar Vehiculo', `¿Seguro que deseas eliminar "${vehiculo.modelo}"?`)
+      .confirm(
+        'Eliminar Vehículo',
+        `¿Está seguro de eliminar el vehículo con placa: ${vehiculo.modelo}?`
+      )
       .pipe(
-        // También se limpia esta suscripción
         takeUntilDestroyed(this.destroyRef),
-        // Encadena la confirmación con la llamada DELETE
         switchMap((confirmed) => {
-          if (confirmed) {
-            return this._vehiculoService.delete(vehiculoId);
-          }
-          // Detiene el flujo si el usuario cancela
-          return EMPTY;
+          // Si el usuario cancela, devolvemos un observable vacío que detiene el flujo
+          if (!confirmed) return EMPTY;
+          return this._vehiculoService.delete(vehiculo.id!);
         })
       )
       .subscribe({
         next: () => {
-          this._notificacionService.success('Vehiculo eliminado correctamente');
+          this._notificacionService.success('Eliminado correctamente');
           this.loadVehiculos();
         },
-        error: () => this._notificacionService.error('Error al eliminar vehiculo'),
+        error: (err) => {
+          // El error suele venir del backend (ej: Vehículo con reserva activa no se puede borrar)
+          const msg = err.error?.mensaje || 'No se pudo eliminar el vehículo';
+          this._notificacionService.error(msg);
+        },
       });
   }
 }

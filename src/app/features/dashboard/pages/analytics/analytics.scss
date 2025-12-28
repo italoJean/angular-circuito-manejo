@@ -1,0 +1,133 @@
+// Variables
+$bg-dashboard: #f0f2f5;
+$white: #ffffff;
+$shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+$radius: 12px;
+
+$color-success: #1cc88a;
+$color-primary: #4e73df;
+$color-warning: #f6c23e;
+$color-danger: #e74a3b;
+
+.dashboard {
+  padding: 2rem;
+  background-color: $bg-dashboard;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  // Layout de KPIs (Grid de 4 columnas)
+  &__kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  // Layout de Gráficos (Grid de 2 columnas)
+  &__charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+// BLOQUE: kpi-card
+.kpi-card {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  border-left: 5px solid;
+  transition: transform 0.2s ease;
+
+  &:hover { transform: translateY(-5px); }
+
+  &--success { border-left-color: $color-success; .kpi-card__label { color: $color-success; } }
+  &--primary { border-left-color: $color-primary; .kpi-card__label { color: $color-primary; } }
+  &--warning { border-left-color: $color-warning; .kpi-card__label { color: $color-warning; } }
+  &--danger  { border-left-color: $color-danger;  .kpi-card__label { color: $color-danger; } }
+
+  &__content {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  &__value {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #444;
+  }
+
+  &__subtext {
+    margin: 0;
+    font-size: 0.65rem;
+    color: #3b3636;
+  }
+
+  &__icon {
+    font-size: 2rem;
+    color: #e3e6f0;
+  }
+}
+
+// BLOQUE: chart-container
+.chart-container {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    padding: 1rem 1.5rem;
+    background: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+    font-weight: 700;
+    color: $color-primary;
+  }
+
+  &__body {
+    padding: 1.5rem;
+    height: 320px; // Altura fija para controlar el tamaño de los gráficos
+    position: relative;
+    
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}
+
+// RESPONSIVIDAD (Media Queries manuales)
+@media (max-width: 992px) {
+  .dashboard__charts {
+    grid-template-columns: 1fr; // En tablets/laptops pequeñas, 1 gráfico por fila
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard {
+    padding: 1rem;
+  }
+  
+  .dashboard__kpis {
+    grid-template-columns: 1fr; // En móviles, 1 tarjeta KPI por fila
+  }
+
+  .chart-container__body {
+    height: 280px;
+  }
+}

@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { Home } from "./pages/home/home";
 import { Toolbar } from "../../core/layout/toolbar/toolbar";
 import { Calendario } from "../dashboard/pages/calendario/calendario";
+import { Analytics } from "./pages/analytics/analytics";
 
 
 export const dashboardRoutes: Routes = [
@@ -24,6 +25,12 @@ export const dashboardRoutes: Routes = [
                 component:Calendario,
                 // loadComponent:()=>import('../dashboard/pages/calendario/calendario').then((m)=>m.Calendario),
                 title:'Calendario'
+            },
+            {
+                path:'grafico',
+                component:Analytics,
+                // loadComponent:()=>import('../dashboard/pages/calendario/calendario').then((m)=>m.Calendario),
+                title:'Gráficos Estadísticos'
             },
             {
                 path:'paquete',

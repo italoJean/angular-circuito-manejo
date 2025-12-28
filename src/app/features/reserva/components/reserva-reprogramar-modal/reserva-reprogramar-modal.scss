@@ -1,180 +1,137 @@
-/* reserva-reprogramar-modal.component.scss */
+// Variables 
+$primary-color: #1976d2;
+$bg-info: #f8f9fa;
+$text-secondary: #666;
+$border-radius: 12px;
+$shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-.dialog-title {
+.repro-modal {
+  &__title {
     display: flex;
     align-items: center;
-    padding: 20px 24px 10px;
+    gap: 12px;
+    color: $primary-color;
+    font-weight: 600;
+    margin-bottom: 0 !important;
+    padding: 20px 24px !important;
+  }
 
-    .title-icon {
-        margin-right: 12px;
-        color: #ffa500; // Color de actualización/cambio
-        font-size: 28px;
-    }
-}
+  &__title-icon {
+    transform: scale(1.2);
+  }
 
-.dialog-body {
-    padding: 10px 24px 20px;
-}
+  &__content {
+    padding: 16px 24px !important;
+    max-width: 600px; // Evita que en pantallas gigantes se vea estirado
+  }
 
-.info-box-reprogramar {
-    padding: 15px;
+  // Tarjeta de información actual
+  &__info-card {
+    background: $bg-info;
+    border-radius: $border-radius;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    border: 1px solid #e0e0e0;
     margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background-color: #f7f7f7;
 
-    p {
-        margin: 5px 0;
-        font-size: 0.95em;
-    }
-    .warning-text {
-        font-weight: bold;
-        color: #d32f2f; /* Rojo de advertencia */
-        margin-top: 10px;
-    }
-}
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
 
-// Estilos para mensajes de validación
-.validation-error-box, .validation-success-box {
+      mat-icon {
+        color: $primary-color;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      &__label {
+        display: block;
+        font-size: 0.75rem;
+        color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      &__value {
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: block;
+      }
+    }
+  }
+
+  &__helper-text {
     display: flex;
     align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #ef6c00;
+    background: #fff3e0;
     padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 15px;
+    border-radius: 8px;
+    margin-bottom: 24px;
 
-    mat-icon {
-        margin-right: 10px;
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  }
+
+  &__section-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 12px;
+    border-left: 4px solid $primary-color;
+    padding-left: 10px;
+  }
+
+  &__form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__calendar-box {
+    display: grid;
+    grid-template-columns: 2fr 1fr; // El input de fecha es más ancho que el de minutos
+    gap: 12px;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr; // En móviles uno debajo del otro
     }
-    p {
-        margin: 0;
-        font-size: 0.9em;
-    }
+  }
+
+  &__field {
+    width: 100%;
+  }
+
+  &__search-container {
+    padding: 8px 16px;
+  }
+
+  &__search-input {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    padding: 8px 0;
+    &:focus { outline: none; border-bottom-color: $primary-color; }
+  }
+
+  &__actions {
+    padding: 16px 24px !important;
+    gap: 12px;
+  }
+
+  &__loading, &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+    color: $text-secondary;
+    gap: 16px;
+  }
 }
-
-.validation-error-box {
-    background-color: #ffebee;
-    border: 1px solid #f44336;
-    color: #f44336;
-}
-
-.validation-success-box {
-    background-color: #e8f5e9;
-    border: 1px solid #4caf50;
-    color: #4caf50;
-}
-
-// /* Estilos BEM para ReservaReprogramarModal */
-
-// /* BLOCK: dialog */
-// .dialog__title {
-//     display: flex;
-//     align-items: center;
-//     color: var(--mat-primary-color, #3f51b5); /* Color primario de Material */
-//     padding-bottom: 10px;
-// }
-
-// .dialog__icon {
-//     margin-right: 8px;
-// }
-
-// .dialog__content {
-//     padding: 24px 24px 10px 24px;
-// }
-
-// .loading-box, .error-box {
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     justify-content: center;
-//     padding: 30px;
-//     border-radius: 8px;
-//     background-color: #f5f5f5;
-//     text-align: center;
-// }
-
-// .error-box {
-//     background-color: #ffe0e0;
-//     color: #c00;
-// }
-
-// .error-box mat-icon {
-//     margin-bottom: 10px;
-//     font-size: 32px;
-// }
-
-// /* BLOCK: reserva-info */
-// .reserva-info {
-//     border: 1px solid #ddd;
-//     border-left: 5px solid var(--mat-accent-color, #ff4081);
-//     padding: 15px;
-//     margin-bottom: 20px;
-//     border-radius: 4px;
-//     background-color: #fafafa;
-// }
-
-// .reserva-info__title {
-//     border-bottom: 1px solid #eee;
-//     padding-bottom: 5px;
-//     margin-top: 0;
-//     color: #555;
-//     font-size: 1.1em;
-// }
-
-// .reserva-info__item {
-//     margin: 5px 0;
-// }
-
-// .reserva-info__warning {
-//     display: flex;
-//     align-items: center;
-//     color: #e65100; /* Naranja para advertencia */
-//     font-weight: 500;
-//     margin-top: 15px;
-//     padding: 5px 0;
-//     border-top: 1px dashed #ffd740;
-// }
-
-// .reserva-info__warning mat-icon {
-//     margin-right: 8px;
-//     font-size: 18px;
-// }
-
-// /* BLOCK: form-section */
-// .form-section__title {
-//     margin: 20px 0 10px 0;
-//     font-size: 1.2em;
-//     color: var(--mat-primary-color, #3f51b5);
-// }
-
-// .form-section__field {
-//     margin-bottom: 15px;
-// }
-
-// /* BLOCK: date-picker-group */
-// .date-picker-group {
-//     display: flex;
-//     gap: 15px;
-//     align-items: flex-start; /* Alinea los elementos arriba */
-// }
-
-// .date-picker-group__input {
-//     flex-grow: 1;
-// }
-
-// .date-picker-group__btn {
-//     height: 56px; /* Coincide con la altura estándar de mat-form-field appearance="outline" */
-//     display: flex;
-//     align-items: center;
-//     padding: 0 15px;
-// }
-
-// /* MODIFIER: full-width */
-// .full-width {
-//     width: 100%;
-// }
-
-// /* BEM para los elementos internos de Mat Select */
-// .search-field {
-//     padding: 0 16px;
-//     width: 100%;
-// }

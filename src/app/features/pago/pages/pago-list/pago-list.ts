@@ -1,8 +1,7 @@
-import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { ModalService } from '../../../../shared/services/modal.service';
 import { ReservaService } from '../../../reserva/services/reserva.service';
 import { NotificacionService } from '../../../../shared/services/notificacion.service';
-import { DialogService } from '../../../../shared/services/dialog.service';
 import { PagoService } from '../../services/pago.service';
 import { PagoForm } from '../pago-form/pago-form';
 import { Grid } from "../../../../shared/components/grid/grid";
@@ -11,6 +10,7 @@ import { PagoListadoResponseDTO } from '../../model/pago-listado.response.model'
 import { PagoDetalleResponseDTO } from '../../model/pago-detalle.response.model';
 import { MaterialModule } from '../../../../shared/ui/material-module';
 import { ReservaMinutosModal } from '../../../reserva/components/reserva-minutos-modal/reserva-minutos-modal';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-pago-list',
@@ -19,127 +19,112 @@ import { ReservaMinutosModal } from '../../../reserva/components/reserva-minutos
   styleUrl: './pago-list.scss',
 })
 export class PagoList implements OnInit{
-  
-  private readonly _modalService=inject(ModalService);
-  private readonly _pagoService=inject(PagoService);
-  private readonly _reservaService=inject(ReservaService);
-  private readonly _notificacionService=inject(NotificacionService);
-  private readonly _dialogService=inject(DialogService);
+  // INYECCIÓN DE SERVICIOS
+  private readonly _modalService = inject(ModalService);
+  private readonly _pagoService = inject(PagoService);
+  private readonly _reservaService = inject(ReservaService);
+  private readonly _notificacionService = inject(NotificacionService);
+  private readonly _destroyRef = inject(DestroyRef);
 
-  
-
-  // Guarda el estado de la lista de pagos.
+  // ESTADO REACTIVO
+  // data: Lista de pagos formateada para el listado principal (DTO optimizado)
   data = signal<PagoListadoResponseDTO[]>([]);
 
-//   // ✅ Columnas a mostrar (usa las relaciones)
-//   displayedColumns: Array<keyof PagoListadoResponseDTO | 'action' | 'details'> = [
-//   'id','numeroBoleta', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 'monto','tipoPago', 'fechaPago', 'estado', 'details', 'action'
-// ];
-
-
-  // ✅ Columnas a mostrar (usa las relaciones)
+  // CONFIGURACIÓN DE TABLA
+  // 'details' es una columna de acción personalizada para ver el desglose del pago
   displayedColumns: Array<string> = [
-  'id','numeroBoleta', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 'monto','tipoPago', 'fechaPago', 'estado', 'details'
-];
+    'id', 'numeroBoleta', 'nombreUsuario', 'apellidoUsuario', 
+    'nombrePaquete', 'monto', 'tipoPago', 'fechaPago', 'estado', 'details'
+  ];
 
-  // ✅ Columnas ordenables (solo algunas)
-  sortables: Array<string> = ['id', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 'fechaPago', 'estado', 'monto','tipoPago'] as const;
+  sortables: Array<string> = [
+    'id', 'nombreUsuario', 'apellidoUsuario', 'nombrePaquete', 
+    'fechaPago', 'estado', 'monto', 'tipoPago'
+  ];
 
-  // ✅ Etiquetas de las columnas (Signal)
   readonly columnLabels = signal<Record<string, string>>({
     id: 'ID',
     numeroBoleta: 'N° Boleta',
-    nombreUsuario: 'Nombre',
+    nombreUsuario: 'Cliente',
     apellidoUsuario: 'Apellido',
     nombrePaquete: 'Paquete',
-    monto: 'Monto',
-    tipoPago: 'Tipo de Pago',
-    fechaPago: 'Fecha de Pago',
+    monto: 'Monto Total',
+    tipoPago: 'Método',
+    fechaPago: 'Fecha',
     estado: 'Estado',
-    details: 'Detalles',
+    details: 'Ver Detalle',
   });
 
   ngOnInit(): void {
     this.loadPagos();
   }
 
-  // ✅ Cargar todos los pagos
-  loadPagos() {
-    this._pagoService.findAll().subscribe({
-      next: (pagos) => {
-        this.data.set(pagos);
-        console.log('Pagos cargados:', pagos);
-      },
-      error: (err) => {
-        console.error('Error al cargar pagos:', err);
-        this._notificacionService.error('Error al cargar pagos');
-      }
-    });
-  }
-
-  // ✅ Abrir modal de creación
-  openCreateModal(): void {
-    this._modalService.openModal(PagoForm).subscribe((nuevo) => {
-      if (nuevo) {
-        this._notificacionService.success('Pago creado correctamente');
-        this.loadPagos();
-      }
-    });
-  }
-
-  /*
-  // ✅ Abrir modal de edición
-  openEditModal(pago: PagoListadoResponseDTO): void {
-    this._modalService.openModal(PagoForm, pago).subscribe((editado) => {
-      if (editado) {
-        this._notificacionService.success('Pago actualizado correctamente');
-        this.loadPagos();
-      }
-    });
-  }
-
-  /*
-  // ✅ Eliminar pago con confirmación
-  deletePago(pago: PagoListadoResponseDTO): void {
-    this._dialogService
-      .confirm('Eliminar Pago', `¿Seguro que deseas eliminar el pago N°${pago.id}?`)
-      .subscribe((confirmed) => {
-        if (confirmed) {
-          this._pagoService.delete(pago.id).subscribe({
-            next: () => {
-              this._notificacionService.success('Pago eliminado correctamente');
-              this.loadPagos();
-            },
-            error: () => this._notificacionService.error('Error al eliminar pago'),
-          });
+  /**
+   * Carga la lista general de pagos.
+   * Se usa takeUntilDestroyed para evitar fugas de memoria si se cambia de vista rápido.
+   */
+  loadPagos(): void {
+    this._pagoService.findAll()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (pagos) => this.data.set(pagos),
+        error: (err) => {
+          console.error('Error al cargar pagos:', err);
+          this._notificacionService.error('No se pudo sincronizar la lista de pagos');
         }
       });
-  }*/
+  }
 
-onViewDetails(pagoListado: PagoListadoResponseDTO): void {
-  // Primero obtenemos el detalle completo usando el ID
-  this._pagoService.findByDetalleId(pagoListado.id).subscribe({
-    next: (pagoDetalle: PagoDetalleResponseDTO) => {
-      // Ahora pasamos el DTO correcto al modal
-      this._modalService.openModal(PagoDetailDialog, pagoDetalle).subscribe();
-    },
-    error: (err) => {
-      console.error('Error cargando detalles:', err);
-      this._notificacionService.error('Error al cargar detalles del pago');
-    }
-  });
-}
+  /**
+   * Apertura de modal para registro de nuevo pago.
+   * Solo recarga la lista si el modal devuelve un objeto (confirmación de éxito).
+   */
+  openCreateModal(): void {
+    this._modalService.openModal(PagoForm)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((nuevo) => {
+        if (nuevo) {
+          this._notificacionService.success('Pago registrado y boleta generada');
+          this.loadPagos();
+        }
+      });
+  }
 
-onViewReservas(pago: PagoListadoResponseDTO): void {
-  this._reservaService.findByIdMinutos(pago.id).subscribe({
-    next: (response)=>{
-      this._modalService.openModal(ReservaMinutosModal,response).subscribe();
-    },
-    error:()=> {
-      this._notificacionService.error('No se pudieron cargar los minutos consumidos');
+  /**
+   * LÓGICA DE DETALLE:
+   * El listado principal no trae toda la información por rendimiento.
+   * Al hacer clic, consultamos el detalle completo (PagoDetalleResponseDTO) y lo abrimos.
+   */
+  onViewDetails(pagoListado: PagoListadoResponseDTO): void {
+    if (!pagoListado.id) return;
 
-    }
-  })
-}
+    this._pagoService.findByDetalleId(pagoListado.id)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (pagoDetalle: PagoDetalleResponseDTO) => {
+          this._modalService.openModal(PagoDetailDialog, pagoDetalle).subscribe();
+        },
+        error: (err) => {
+          console.error('Error cargando detalles:', err);
+          this._notificacionService.error('No se pudo obtener el desglose de este pago');
+        }
+      });
+  }
 
+  /**
+   * RELACIÓN CON RESERVAS:
+   * Permite ver qué reservas específicas y cuántos minutos consumió este pago.
+   */
+  onViewReservas(pago: PagoListadoResponseDTO): void {
+    this._reservaService.findByIdMinutos(pago.id)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          this._modalService.openModal(ReservaMinutosModal, response).subscribe();
+        },
+        error: () => {
+          this._notificacionService.error('Error al vincular los minutos con las reservas');
+        }
+      });
+  }
 }

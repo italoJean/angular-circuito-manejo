@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="dialog-title">
-  <mat-icon class="title-icon">directions_car</mat-icon>
+  <mat-icon class="title-icon">directions_car</mat-icon> 
   {{ isEditing ? 'Editar Reserva' : 'Crear Reserva' }}
 </h2>
 
@@ -72,7 +72,7 @@
       <mat-icon matPrefix>event</mat-icon>
       <mat-label>Fecha y Hora de Reserva</mat-label>
 
-      <input matInput formControlName="fechaReserva" readonly placeholder="Seleccione en el calendario">
+      <input matInput formControlName="fechaReserva"  placeholder="Seleccione en el calendario">
     </mat-form-field>
 
     <button mat-stroked-button color="primary" (click)="openCalendarDialog()" class="calendar-btn"

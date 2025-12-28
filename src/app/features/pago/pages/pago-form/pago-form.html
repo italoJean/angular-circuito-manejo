@@ -5,54 +5,43 @@
 
 <mat-dialog-content [formGroup]="form" class="modal__body form">
   
-  <!-- Usuario -->
   <div class="form__section-title">Datos del Cliente</div>
 
   <mat-form-field appearance="outline" class="form__field form__field--select-search">
     <mat-label>Cliente</mat-label>
     <mat-icon matPrefix class="form__icon">person</mat-icon>
-    <input
-      matInput
-      placeholder="Buscar por nombre o DNI"
-      [(ngModel)]="filtroUsuario"
-      name="filtroUsuario"
-      [ngModelOptions]="{ standalone: true }"
-    />
+    <input matInput (input)="onFilterUsuario($event)" placeholder="Nombre o DNI...">
     <mat-select formControlName="usuarioId">
-      <mat-option *ngFor="let usuario of usuariosFiltrados" [value]="usuario.id">
-        {{ usuario.nombre }} ({{ usuario.numeroDocumento }})
+      @for (usuario of usuariosFiltrados(); track usuario.id) {
+      <mat-option [value]="usuario.id">
+        {{ usuario.nombre }} {{ usuario.apellido }} ({{ usuario.numeroDocumento }})
       </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 
-  <!-- Paquete -->
-  <div class="form__section-title">Paquete Seleccionado</div>
+  <div class="form__section-title">Datos del Paquete</div>
 
   <mat-form-field appearance="outline" class="form__field form__field--select-search">
     <mat-label>Paquete</mat-label>
     <mat-icon matPrefix class="form__icon">shopping_bag</mat-icon>
-    <input
-      matInput
-      placeholder="Buscar paquete"
-      [(ngModel)]="filtroPaquete"
-      name="filtroPaquete"
-      [ngModelOptions]="{ standalone: true }"
-    />
+    <input matInput (input)="onFilterPaquete($event)" placeholder="Nombre del paquete...">
     <mat-select formControlName="paqueteId">
-      <mat-option *ngFor="let paquete of paquetesFiltrados" [value]="paquete.id">
+      @for (paquete of paquetesFiltrados(); track paquete.id) {
+      <mat-option [value]="paquete.id">
         {{ paquete.nombre }} - {{ paquete.precioTotal | currency : 'PEN' }}
       </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 
-  <!-- Metodo Pago -->
-  <div class="form__section-title">Método de Pago</div>
+  <div class="form__section-title">Configuración de Pago</div>
 
   <mat-form-field appearance="outline" class="form__field form__field--select">
     <mat-label>Metodo de Pago</mat-label>
     <mat-icon matPrefix class="form__icon">credit_card</mat-icon>
     <mat-select formControlName="metodoPago">
-      @for (metodo of metodoPagos; track $index) {
+      @for (metodo of metodoPagos; track metodo) {
       <mat-option [value]="metodo">{{ metodo }}</mat-option>
       }
     </mat-select>
@@ -62,25 +51,33 @@
     ¿Pagar en cuotas?
   </mat-slide-toggle>
 
-  <div *ngIf="form.get('pagarEnCuotas')?.value" class="form__cuotas-box form__cuotas-box--fade">
+  @if (form.get('pagarEnCuotas')?.value) {
+  <div class="form__cuotas-box form__cuotas-box--fade">
     <mat-form-field appearance="outline" class="form__field">
       <mat-label>Número de cuotas</mat-label>
       <mat-icon matPrefix class="form__icon">splitscreen</mat-icon>
-      <input matInput type="number" formControlName="cuotas" />
+      <input matInput type="number" inputmode="numeric" formControlName="cuotas" min="2" max="12" />
+      <mat-hint>Mínimo 2, Máximo 12</mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form__field">
-      <mat-label>Monto del primer pago</mat-label>
+      <mat-label>Monto inicial (S/)</mat-label>
       <mat-icon matPrefix class="form__icon">attach_money</mat-icon>
-      <input matInput type="number" formControlName="montoPrimerPago" />
+      <input matInput type="number" inputmode="numeric" formControlName="montoPrimerPago" />
     </mat-form-field>
   </div>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="modal__actions">
-  <button mat-button (click)="close()">Cancelar</button>
-  <button mat-flat-button color="primary" (click)="save()">
+  <button mat-button (click)="close()" [disabled]="loading">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || loading">
     <mat-icon>save</mat-icon>
-    {{ isEditing ? 'Actualizar' : 'Guardar' }}
+    @if (loading) {
+    <mat-spinner diameter="18" style="margin-right: 8px; display: inline-block"></mat-spinner>
+    Enviando... } @else {
+      
+      Confirmar Operación
+    }
   </button>
 </mat-dialog-actions>

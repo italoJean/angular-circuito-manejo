@@ -1,41 +1,53 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { Component, computed, inject, Inject, signal } from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { PagoMinutosDTO } from '../../model/event/pago-minutos.model';
-import { MaterialModule } from "../../../../shared/ui/material-module";
+import { MaterialModule } from '../../../../shared/ui/material-module';
 import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import { ReservaMinutosDTO } from '../../model/event/reserva-minutos.model';
-import {MatExpansionModule} from '@angular/material/expansion';
-import { FechaHoraPipe } from '../../../../shared/pipes/fecha-hora-pipe';
 import { MinutosHorasPipe } from '../../../../shared/pipes/minutos-horas-pipe';
 @Component({
   selector: 'app-reserva-minutos-modal',
-  imports: [MaterialModule, MatDialogContent, MatDialogActions,DatePipe,NgClass,MatExpansionModule,CommonModule,MinutosHorasPipe],
+  imports: [MaterialModule, DatePipe, NgClass, CommonModule, MinutosHorasPipe],
   templateUrl: './reserva-minutos-modal.html',
   styleUrl: './reserva-minutos-modal.scss',
 })
 export class ReservaMinutosModal {
+  private readonly dialogRef = inject(MatDialogRef<ReservaMinutosModal>);
 
-  columns = [
+  // Usar signals hace que la UI sea más reactiva y eficiente.
+  expandedRow = signal<number | null>(null);
+
+  // Columnas fijas (ReadOnly) para evitar mutaciones accidentales
+  readonly columns: string[] = [
     'reservaId',
     'fechaReserva',
     'fechaFin',
     'minutosReservados',
     'estado',
-    'detalle'
+    'detalle',
   ];
 
-  expanded: ReservaMinutosDTO | null = null;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: PagoMinutosDTO,
-    private dialogRef: MatDialogRef<ReservaMinutosModal>
-  ) {}
-
-  toggle(r: ReservaMinutosDTO) {
-    this.expanded = this.expanded?.reservaId === r.reservaId ? null : r;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: PagoMinutosDTO) {
+    // data contiene el historial de reservas asociadas a un pago.
   }
 
-  cerrar() {
+  selectedReserva = computed(() => {
+  const id = this.expandedRow();
+  return id ? this.data.reservas.find(r => r.reservaId === id) : null;
+});
+
+  /**
+   * Controla la expansión de filas en la tabla.
+   * Si el ID ya está expandido, lo cierra (null), sino lo abre.
+   */
+  toggle(r: ReservaMinutosDTO): void {
+    this.expandedRow.update((current) => (current === r.reservaId ? null : r.reservaId));
+  }
+
+  cerrar(): void {
     this.dialogRef.close();
   }
 }

@@ -1,32 +1,41 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { MaterialModule } from "../../../../shared/ui/material-module";
+import { Component, inject, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MaterialModule } from '../../../../shared/ui/material-module';
 
 @Component({
   selector: 'app-confirm-suspend-pago-dialog',
-  imports: [MaterialModule, MatDialogContent, MatDialogActions],
+  imports: [MaterialModule],
   templateUrl: './confirm-suspend-pago-dialog.html',
   styleUrl: './confirm-suspend-pago-dialog.scss',
 })
 export class ConfirmSuspendPagoDialog {
+  // INYECCIÓN MODERNA
+  private readonly _dialogRef = inject(MatDialogRef<ConfirmSuspendPagoDialog>);
 
-  constructor(
-    private dialogRef: MatDialogRef<ConfirmSuspendPagoDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  // Mantenemos el constructor para el DATA ya que es un estándar de Material
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
-  confirmar() {
-    this.dialogRef.close(true); // true = usuario confirmó
+  /**
+   * Al suspender, devolvemos 'true'. El componente que lo llama debe
+   * encargarse de ejecutar la lógica de 'pagoService.suspend(...)'.
+   */
+  confirmar(): void {
+    this._dialogRef.close(true);
   }
 
-  cancelar() {
-    this.dialogRef.close(false); // false = usuario canceló
+  cancelar(): void {
+    this._dialogRef.close(false);
   }
- formatMonto(monto: number): string {
+
+  /**
+   * BUENA PRÁCTICA: Formateo Localizado
+   * Usar Intl.NumberFormat garantiza que el símbolo de moneda y decimales
+   * siempre sean consistentes en toda la app.
+   */
+  formatMonto(monto: number): string {
     return new Intl.NumberFormat('es-PE', {
       style: 'currency',
-      currency: 'PEN'
+      currency: 'PEN',
     }).format(monto);
   }
-  
 }

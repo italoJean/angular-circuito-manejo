@@ -6,13 +6,11 @@
 <mat-dialog-content>
   <div class="suspend-dialog-content">
 
-    <!-- Mensaje Principal -->
     <p class="main-message">
-      ¿Deseas suspender el pago 
+      ¿Deseas suspender el flujo de pagos de la boleta:
       <strong>#{{ data.numeroBoleta }}</strong>?
     </p>
 
-    <!-- Tarjeta de Detalles -->
     <mat-card class="details-card">
       <mat-card-content class="details">
         <div class="detail-item">
@@ -27,17 +25,16 @@
 
         <div class="detail-item">
           <span class="label">Cuotas Pendientes:</span>
-          <span class="value">{{ data.pendientes }}</span>
+          <span class="value">{{ data.pendientes }} cuotas</span>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <!-- Advertencia -->
     <div class="warning-box">
       <mat-icon>warning</mat-icon>
       <p>
-        Esta acción afectará <strong>todas las cuotas pendientes</strong> 
-        asociadas a este pago. Las cuotas ya pagadas no serán modificadas.
+        <strong>Atención:</strong> Esta acción afectará solo las 
+        <strong>cuotas pendientes</strong>. Los pagos ya procesados no se verán alterados.
       </p>
     </div>
 
@@ -51,6 +48,6 @@
 
   <button mat-raised-button color="warn" (click)="confirmar()" class="btn-suspender">
     <mat-icon >pause_circle</mat-icon>
-    Suspender Pago
+    Confirmar Suspensión
   </button>
 </mat-dialog-actions>

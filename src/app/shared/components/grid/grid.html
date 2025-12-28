@@ -1,80 +1,59 @@
 <section class="grid-container">
   <app-filter
-    [label]="'Filter...'"
-    [placeholder]="'Search....'"
+    [label]="'Filtrar...'"
+    [placeholder]="'Buscar registro...'"
     [(filter)]="valueToFilter"
-    
     (onRefresh)="handleRefresh()"
   ></app-filter>
 
   <div class="table-wrapper">
     <table mat-table matSort [dataSource]="dataSource" class="grid-table">
-      @for (column of displayedColumns(); track $index) {
+      @for (column of displayedColumns(); track column) {
 
       <ng-container [matColumnDef]="column">
-        <!-- Header -->
-        @if (this.sortableColumns().includes(column)) {
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="custom-header-cell">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          [mat-sort-header]="sortableColumns().includes(column) ? column : ''"
+          [disabled]="!sortableColumns().includes(column)"
+          class="custom-header-cell"
+        >
           {{ columnLabels()[column] || column }}
         </th>
-        }@else {
-        <th mat-header-cell *matHeaderCellDef class="custom-header-cell">
-          {{ columnLabels()[column] || column }}
-        </th>
-        }
 
-        <!-- Celda -->
         <td mat-cell *matCellDef="let element">
-          <!-- {{ element[column] }}  aca lo comentamos en caso paso algo hago rallback-->
-
-          @if (pipesMap()[column] === 'minutosHoras') {
-          {{ element[column] | minutosHorasPipe }}
-
-          } @else if (pipesMap()[column] === 'currency') {
-          {{ element[column] | currency : 'PEN' : 'S/. ' : '1.2-2' }}
-          } @else if (pipesMap()[column] === 'date') {
-          {{ element[column] | date : 'dd/MM/yyyy h:mm a' }}
-          } @else {
+          @switch (pipesMap()[column]) { @case ('minutosHoras') {
+          {{ element[column] | minutosHorasPipe }} } @case ('currency') {
+          {{ element[column] | currency : 'PEN' : 'S/. ' : '1.2-2' }} } @case ('date') {
+          {{ element[column] | date : 'dd/MM/yyyy h:mm a' }} } @default { @if (!['details',
+          'cambios', 'action'].includes(column)) {
           {{ element[column] }}
-          }
-
-          <!-- Details -->
-          @if(column === 'details'){
-          <button matIconButton class="details-btn" (click)="details.emit(element)">
+          } } } @if(column === 'details'){
+          <button
+            matIconButton
+            class="details-btn"
+            (click)="details.emit(element)"
+            matTooltip="Ver detalles"
+          >
             <mat-icon>visibility</mat-icon>
           </button>
 
-          <button matIconButton class="reservas-btn" (click)="reservas.emit(element)">
+          <button
+            matIconButton
+            class="reservas-btn"
+            (click)="reservas.emit(element)"
+            matTooltip="Ver calendario"
+          >
             <mat-icon>schedule</mat-icon>
           </button>
-          }
-
-          <!-- Cambios -->
-          <!-- @if(column === 'cambios'){
-          <button matIconButton class="reprogramar-btn" (click)="reprogramar.emit(element)">
-            <mat-icon>edit_calendar</mat-icon>
-          </button>
-
-          <button matIconButton class="incidencia-btn" (click)="incidencia.emit(element)">
-            <mat-icon>warning</mat-icon>
-          </button>
-
-          <button matIconButton class="cancelar-btn" (click)="cancelar.emit(element)">
-            <mat-icon>cancel</mat-icon>
-          </button>
-          } -->
-
-          @if(column === 'cambios'){
+          } @if(column === 'cambios'){
 
           <button
             matIconButton
             class="reprogramar-btn"
             (click)="reprogramar.emit(element)"
-            [disabled]="
-              element.estado === 'EN_PROGRESO' ||
-              element.estado === 'CANCELADO' ||
-              element.estado === 'FINALIZADO'
-            "
+            [disabled]="['EN_PROGRESO', 'CANCELADO', 'FINALIZADO'].includes(element.estado)"
+            matTooltip="Reprogramar"
           >
             <mat-icon>edit_calendar</mat-icon>
           </button>
@@ -84,6 +63,7 @@
             class="incidencia-btn"
             (click)="incidencia.emit(element)"
             [disabled]="element.estado === 'RESERVADO'"
+            matTooltip="Reportar incidencia"
           >
             <mat-icon>warning</mat-icon>
           </button>
@@ -92,23 +72,27 @@
             matIconButton
             class="cancelar-btn"
             (click)="cancelar.emit(element)"
-            [disabled]="
-              element.estado === 'EN_PROGRESO' ||
-              element.estado === 'CANCELADO' ||
-              element.estado === 'FINALIZADO'
-            "
+            [disabled]="['EN_PROGRESO', 'CANCELADO', 'FINALIZADO'].includes(element.estado)"
+            matTooltip="Anular"
           >
             <mat-icon>cancel</mat-icon>
           </button>
-          }
-
-          <!-- Acciones -->
-          @if(column === 'action'){
-          <button matIconButton class="edit-btn" (click)="edit.emit(element)">
+          } @if(column === 'action'){
+          <button
+            matIconButton
+            class="edit-btn"
+            (click)="edit.emit(element)"
+            matTooltip="Actualizar"
+          >
             <mat-icon>edit</mat-icon>
           </button>
 
-          <button matIconButton class="delete-btn" (click)="delete.emit(element)">
+          <button
+            matIconButton
+            class="delete-btn"
+            (click)="delete.emit(element)"
+            matTooltip="Eliminar"
+          >
             <mat-icon>delete</mat-icon>
           </button>
           }
@@ -120,88 +104,6 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns()" class="row-fila"></tr>
     </table>
 
-    <mat-paginator
-      [pageSizeOptions]="[5, 10, 20]"
-      showFirstLastButtons
-      aria-label="Select page of periodic elements"
-    >
-    </mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons> </mat-paginator>
   </div>
 </section>
-
-<!-- <section class="data-grid">
-  <app-filter
-    [label]="'Filter...'"
-    [placeholder]="'Search....'"
-    [(filter)]="valueToFilter"
-    class="data-grid__filter filter"
-  ></app-filter>
-
-  <div class="data-grid__wrapper">
-    <table mat-table matSort [dataSource]="dataSource" class="data-grid__table">
-      @for (column of displayedColumns(); track $index) {
-
-      <ng-container [matColumnDef]="column">
-        @if (this.sortableColumns().includes(column)) {
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="data-grid__header-cell data-grid__header-cell--sortable">
-          {{ columnLabels()[column] || column }}
-        </th>
-        }@else {
-        <th mat-header-cell *matHeaderCellDef class="data-grid__header-cell">
-          {{ columnLabels()[column] || column }}
-        </th>
-        }
-
-        <td mat-cell *matCellDef="let element" class="data-grid__cell">
-          {{ element[column] }}
-
-          @if(column === 'details'){
-          <button matIconButton class="data-grid__button data-grid__button--details" (click)="details.emit(element)">
-            <mat-icon>visibility</mat-icon>
-          </button>
-
-          <button matIconButton class="data-grid__button data-grid__button--reservas" (click)="reservas.emit(element)">
-            <mat-icon>schedule</mat-icon>
-          </button>
-          }
-
-          @if(column === 'cambios'){
-          <button matIconButton class="data-grid__button data-grid__button--reprogramar" (click)="reprogramar.emit(element)">
-            <mat-icon>edit_calendar</mat-icon>
-          </button>
-
-          <button matIconButton class="data-grid__button data-grid__button--incidencia" (click)="incidencia.emit(element)">
-            <mat-icon>warning</mat-icon>
-          </button>
-
-          <button matIconButton class="data-grid__button data-grid__button--cancelar" (click)="cancelar.emit(element)">
-            <mat-icon>cancel</mat-icon>
-          </button>
-          }
-
-          @if(column === 'action'){
-          <button matIconButton class="data-grid__button data-grid__button--edit" (click)="edit.emit(element)">
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <button matIconButton class="data-grid__button data-grid__button--delete" (click)="delete.emit(element)">
-            <mat-icon>delete</mat-icon>
-          </button>
-          }
-        </td>
-      </ng-container>
-      }
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns()" class="data-grid__header-row"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns()" class="data-grid__row-fila"></tr>
-    </table>
-
-    <mat-paginator
-      [pageSizeOptions]="[5, 10, 20]"
-      showFirstLastButtons
-      aria-label="Select page of periodic elements"
-      class="data-grid__paginator"
-    >
-    </mat-paginator>
-  </div>
-</section> -->

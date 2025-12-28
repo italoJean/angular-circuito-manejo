@@ -1,6 +1,6 @@
 <h2 mat-dialog-title class="dialog-title">
   <mat-icon class="dialog-title__icon">schedule</mat-icon>
-  Consumo de Minutos del Pago #{{ data.pagoId }}
+  Consumo de Minutos - Pago #{{ data.pagoId }}
 </h2>
 
 <mat-dialog-content class="dialog-body">
@@ -91,7 +91,7 @@
       <td mat-cell *matCellDef="let r">
         <button mat-icon-button (click)="toggle(r)">
           <mat-icon>
-            {{ expanded?.reservaId === r.reservaId ? 'expand_less' : 'expand_more' }}
+            {{ expandedRow() === r.reservaId ? 'expand_less' : 'expand_more' }}
           </mat-icon>
         </button>
       </td>
@@ -102,45 +102,45 @@
   </table>
   </div>
 
-  <!--  EXPAND DETALLES          -->
- @if (expanded) {
-   <mat-accordion class="details">
-    <mat-expansion-panel [expanded]="true" class="details__panel">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Detalles de Reserva #{{ expanded.reservaId }}
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+  @if (expandedRow(); as id) {
 
-      <!-- SUBDETALLES -->
-      <mat-accordion multi="true" class="subdetails">
-        <mat-expansion-panel *ngFor="let d of expanded.detalle" [ngClass]="'subdetails__panel--' + d.tipo.toLowerCase()" class="subdetails__panel">
-         
+    @if (selectedReserva(); as selected){
+      <mat-accordion class="details">
+        <mat-expansion-panel [expanded]="true" class="details__panel">
           <mat-expansion-panel-header>
-            <mat-panel-title class="subdetails__title-content">
-                <mat-icon class="subdetails__icon">
-                    {{ d.tipo === 'RESERVA' ? 'event_available' : 'warning_amber' }}
-                </mat-icon>
-                <span>{{ d.tipo }} - {{ d.fechaRegistro | date : 'dd/MM/yyyy HH:mm' }}</span>
+            <mat-panel-title>
+              Detalles de Reserva #{{ selected.reservaId }}
             </mat-panel-title>
           </mat-expansion-panel-header>
 
-          <div class="subdetails__content">
-            <p class="subdetails__text">{{ d.detalle }}</p>
+          <mat-accordion multi="true" class="subdetails">
+            @for (d of selected.detalle; track d.fechaRegistro) {
+              <mat-expansion-panel [ngClass]="'subdetails__panel--' + d.tipo.toLowerCase()" class="subdetails__panel">
+                <mat-expansion-panel-header>
+                  <mat-panel-title class="subdetails__title-content">
+                    <mat-icon class="subdetails__icon">
+                      {{ d.tipo === 'RESERVA' ? 'event_available' : 'warning_amber' }}
+                    </mat-icon>
+                    <span>{{ d.tipo }} - {{ d.fechaRegistro | date : 'dd/MM/yyyy HH:mm' }}</span>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
 
-            <span>Antes: <strong>{{ d.minutosReservadosAntes | minutosHorasPipe }}</strong></span>
-            <span>Usados: <strong>{{ d.minutosUsados | minutosHorasPipe }}</strong></span>
-            <span>Devueltos: <strong>{{ d.minutosDevueltos | minutosHorasPipe }}</strong></span>
-
-            <span class="text-primary">
-              Afectados: <strong>{{ d.minutosAfectados | minutosHorasPipe }}</strong>
-            </span>
-          </div>
+                <div class="subdetails__content">
+                  <p class="subdetails__text">{{ d.detalle }}</p>
+                  <span>Antes: <strong>{{ d.minutosReservadosAntes | minutosHorasPipe }}</strong></span>
+                  <span>Usados: <strong>{{ d.minutosUsados | minutosHorasPipe }}</strong></span>
+                  <span>Devueltos: <strong>{{ d.minutosDevueltos | minutosHorasPipe }}</strong></span>
+                  <span class="text-primary">
+                    Afectados: <strong>{{ d.minutosAfectados | minutosHorasPipe }}</strong>
+                  </span>
+                </div>
+              </mat-expansion-panel>
+            }
+          </mat-accordion>
         </mat-expansion-panel>
       </mat-accordion>
-    </mat-expansion-panel>
-  </mat-accordion>
- }
+    }
+  }
 </mat-dialog-content>
 
 <!--  ACCIONES DEL MODAL       -->

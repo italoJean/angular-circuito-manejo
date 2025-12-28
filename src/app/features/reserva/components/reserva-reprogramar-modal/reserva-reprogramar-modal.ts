@@ -1,187 +1,53 @@
-import { Component, inject, Inject, signal } from '@angular/core';
+import { Component, computed, inject, Inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialogContent,
-  MatDialogActions,
-  MatDialog,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../shared/ui/material-module';
 import { ReservaService } from '../../services/reserva.service';
 import { NotificacionService } from '../../../../shared/services/notificacion.service';
-import { CalendarValidationService } from '../../../../core/services/calendar-validation.service';
-import { ReservaResponse } from '../../model/reserva-response.model';
-import { CalendarRulesConfig } from '../../../../core/models/calendar-rules-config.model';
 import { ReprogramacionRequestDTO } from '../../model/event/reprogramacion-request.model';
-import { CommonModule, DatePipe, NgClass } from '@angular/common';
-import { FullCalendar } from '../../../../shared/components/full-calendar/full-calendar';
+import { CommonModule, DatePipe } from '@angular/common';
 import { DetalleReservaResponse } from '../../model/detalle-response.model';
 import { VehiculoService } from '../../../vehiculo/services/vehiculo.service';
-import { forkJoin, take } from 'rxjs';
 import { HorarioOcupadoDTO } from '../../model/event/horario-ocupado.model';
 import { Vehiculo } from '../../../vehiculo/model/vehiculo.model';
 import { CalendarSelectorDialog } from '../calendar-selector-dialog/calendar-selector-dialog';
+import { finalize } from 'rxjs';
 
-interface ReprogramarData {
-  id: number; // ID de la reserva a reprogramar
-}
 
 @Component({
   selector: 'app-reserva-reprogramar-modal',
-  imports: [MaterialModule, CommonModule, ReactiveFormsModule,DatePipe],
+  imports: [MaterialModule, CommonModule, ReactiveFormsModule, DatePipe],
   templateUrl: './reserva-reprogramar-modal.html',
   styleUrl: './reserva-reprogramar-modal.scss',
 })
 export class ReservaReprogramarModal {
-//   private readonly fb = inject(FormBuilder);
-//   private readonly dialogRef = inject(MatDialogRef<ReservaReprogramarModal>);
-//   private readonly reservaService = inject(ReservaService);
-//   private readonly vehiculoService = inject(VehiculoService);
-//   private readonly notificacionService = inject(NotificacionService);
-//   private readonly dialog = inject(MatDialog);
 
-//   public reservaId: number;
-//   public reservaOriginal: DetalleReservaResponse | null = null;
-//   public form!: FormGroup;
-  
-//   // --- ESTADOS DE CONTROL ---
-//   public isLoading = signal<boolean>(true); // Usamos signals para mejor detección
-//   public isSaving = signal<boolean>(false); // Separamos la carga inicial del guardado
-
-//   vehiculos = signal<Vehiculo[]>([]);
-//   filtroVehiculo = signal('');
-
-//   constructor(@Inject(MAT_DIALOG_DATA) public data: ReprogramacionRequestDTO) {
-//     this.reservaId = data.id;
-//   }
-
-//   ngOnInit(): void {
-//     this.initForm();
-//     this.loadVehiculos();
-//     this.loadDetalleReserva();
-//   }
-
-//   initForm(): void {
-//     this.form = this.fb.group({
-//       vehiculoId: ['', Validators.required],
-//       fechaReserva: ['', Validators.required],
-//       minutosReservados: ['', [Validators.required, Validators.min(1)]],
-//     });
-//   }
-
-//   loadVehiculos() {
-//     this.vehiculoService.findAllOperativos().subscribe({
-//       next: (v) => this.vehiculos.set(v),
-//       error: () => this.notificacionService.error('Error al cargar vehículos')
-//     });
-//   }
-
-//   get vehiculosFiltrados(): Vehiculo[] {
-//     const filtro = this.filtroVehiculo().toLowerCase();
-//     return this.vehiculos().filter(v => 
-//       v.placa.toLowerCase().includes(filtro) || v.marca.toLowerCase().includes(filtro)
-//     );
-//   }
-
-//   loadDetalleReserva(): void {
-//     this.isLoading.set(true);
-//     this.reservaService.findByIdDetalle(this.reservaId).subscribe({
-//       next: (original) => {
-//         this.reservaOriginal = original;
-//         this.form.patchValue({ vehiculoId: original.vehiculo.id });
-//         this.isLoading.set(false);
-//       },
-//       error: () => {
-//         this.notificacionService.error('Error cargando detalles.');
-//         this.isLoading.set(false);
-//       }
-//     });
-//   }
-
-//   openCalendarDialog(): void {
-//     const vehiculoId = this.form.get('vehiculoId')?.value;
-//     const pagoId = this.reservaOriginal?.pago?.id;
-
-//     if (!vehiculoId) {
-//       this.notificacionService.error('Por favor, seleccione un vehículo primero.');
-//       return;
-//     }
-
-//     const dialogRef = this.dialog.open(CalendarSelectorDialog, {
-//       width: '90%',
-//       maxWidth: '800px',
-//       data: { vehiculoId, pagoId }
-//     });
-
-//     dialogRef.afterClosed().subscribe(result => {
-//       if (result) {
-//         this.form.patchValue({
-//           fechaReserva: result.fechaReserva,
-//           minutosReservados: result.minutosReservados
-//         });
-//         this.form.markAsDirty();
-//       }
-//     });
-//   }
-
-//   save(): void {
-//     // REGLA DE ORO: Si ya está guardando o el form es inválido, salimos inmediatamente
-//     if (this.isSaving() || this.form.invalid) {
-//       return;
-//     }
-
-//     // Bloqueamos el estado
-//     this.isSaving.set(true);
-
-//     const { vehiculoId, fechaReserva, minutosReservados } = this.form.getRawValue();
-
-//     const dto: ReprogramacionRequestDTO = {
-//       id: this.reservaId,
-//       vehiculoId: vehiculoId,
-//       nuevaFecha: fechaReserva,
-//       minutosReservados: minutosReservados
-//     };
-
-//     // Llamada al servicio con manejo de "limpieza" de bandera al terminar
-//     this.reservaService.reprogramar(this.reservaId, dto).subscribe({
-//       next: (res) => {
-//         this.notificacionService.success('✅ Reserva reprogramada exitosamente!');
-//         this.dialogRef.close(res);
-//       },
-//       error: (err) => {
-//         this.isSaving.set(false); // Desbloqueamos solo en caso de error
-//         const msg = err.error?.message || 'Error al reprogramar.';
-//         this.notificacionService.error(msg);
-//       }
-//     });
-//   }
-
-//   close(): void {
-//     this.dialogRef.close();
-//   }
-// }
-
- private readonly fb = inject(FormBuilder);
+  // Inyección de dependencias moderna
+  private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<ReservaReprogramarModal>);
   private readonly reservaService = inject(ReservaService);
   private readonly vehiculoService = inject(VehiculoService);
   private readonly notificacionService = inject(NotificacionService);
-private readonly dialog = inject(MatDialog);
-  public reservaId: number;
+  private readonly dialog = inject(MatDialog);
+
+  // Datos de la reserva
+  public readonly reservaId: number;
   public reservaOriginal: DetalleReservaResponse | null = null;
+
   public todasReservas: HorarioOcupadoDTO[] = []; // Reservas del vehículo (para validación)
 
-  form!: FormGroup;
-  public isLoading: boolean = true;
+  // Estado de la interfaz
+  public isLoading:boolean=true; 
 
-  vehiculos = signal<Vehiculo[]>([]);
-  filtroVehiculo = signal('');
+  // Gestión de Vehículos con Signals
+  private vehiculos = signal<Vehiculo[]>([]);
+  public filtroVehiculo = signal('');
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ReprogramacionRequestDTO) {
     this.reservaId = data.id;
   }
 
+  form!: FormGroup;
   ngOnInit(): void {
     this.initForm(); // Inicializa la estructura del formulario
     this.loadVehiculos(); // Carga la lista de vehículos
@@ -191,16 +57,17 @@ private readonly dialog = inject(MatDialog);
   initForm(): void {
     this.form = this.fb.group({
       // El pagoId es necesario para el DTO, pero lo obtendremos de reservaOriginal
-     
 
       // Campos que el usuario puede cambiar o que el calendario actualiza
       vehiculoId: [this.data?.vehiculoId || '', Validators.required],
-      fechaReserva: [this.data?.nuevaFecha ||'', Validators.required],
-      minutosReservados: [this.data?.minutosReservados || '', [Validators.required, Validators.min(1)]],
+      fechaReserva: [this.data?.nuevaFecha || '', Validators.required],
+      minutosReservados: [
+        this.data?.minutosReservados || '',
+        [Validators.required, Validators.min(1)],
+      ],
     });
   }
 
-  
   // Cargar vehículos
   loadVehiculos() {
     this.vehiculoService.findAllOperativos().subscribe({
@@ -218,95 +85,97 @@ private readonly dialog = inject(MatDialog);
   }
 
   loadDetalleReserva(): void {
-  this.reservaService.findByIdDetalle(this.reservaId).subscribe({
-    next: (original) => {
+    this.reservaService.findByIdDetalle(this.reservaId).subscribe({
+      next: (original) => {
         this.reservaOriginal = original;
-        
       },
-            error: () => {
-                this.notificacionService.error('Error cargando horarios del vehículo inicial.');
-                this.isLoading = false;
-            },
-        });
+      error: () => {
+        this.notificacionService.error('Error cargando horarios del vehículo inicial.');
+        this.isLoading = false;
+      },
+    });
   }
 
+  openCalendarDialog(): void {
+    const vehiculoId = this.form.get('vehiculoId')?.value;
+    const pagoId = this.data.id; // Obtenemos el pagoId de la reserva original
+    console.log('Abriendo CalendarSelectorDialog con vehiculoId:', vehiculoId, 'y pagoId:', pagoId);
+    // 1. Validar IDs
+    if (!vehiculoId || !pagoId) {
+      this.notificacionService.error(
+        'Por favor, seleccione un vehículo y asegúrese de que la reserva original haya cargado.'
+      );
+      return;
+    }
 
-openCalendarDialog(): void {
-        const vehiculoId = this.form.get('vehiculoId')?.value;
-        const pagoId = this.data.id; // Obtenemos el pagoId de la reserva original
-       console.log('Abriendo CalendarSelectorDialog con vehiculoId:', vehiculoId, 'y pagoId:', pagoId);
-       // 1. Validar IDs
-        if (!vehiculoId || !pagoId) {
-            this.notificacionService.error('Por favor, seleccione un vehículo y asegúrese de que la reserva original haya cargado.');
-            return;
-        }
-        
     const dialogRef = this.dialog.open(CalendarSelectorDialog, {
-        data: {
-            vehiculoId: vehiculoId, 
-            pagoId: pagoId, // ⬅️ ¡Pasar el ID del cliente es crucial!
-        }, 
-        // ... (resto de las opciones del diálogo)
+      data: {
+        vehiculoId: vehiculoId,
+        pagoId: pagoId, // ⬅️ ¡Pasar el ID del cliente es crucial!
+      },
+      // ... (resto de las opciones del diálogo)
     });
-    dialogRef.afterClosed().subscribe((result: { fechaReserva: string, minutosReservados: number } | undefined) => {
+    dialogRef
+      .afterClosed()
+      .subscribe((result: { fechaReserva: string; minutosReservados: number } | undefined) => {
         if (result) {
-            // 🚨 ¡Aquí está la clave! PatchValue con los datos devueltos por el diálogo
-            this.form.patchValue({
-                fechaReserva: result.fechaReserva, // Fecha y hora seleccionadas (start)
-                minutosReservados: result.minutosReservados, // Duración calculada
-            });
+          // 🚨 ¡Aquí está la clave! PatchValue con los datos devueltos por el diálogo
+          this.form.patchValue({
+            fechaReserva: result.fechaReserva, // Fecha y hora seleccionadas (start)
+            minutosReservados: result.minutosReservados, // Duración calculada
+          });
 
-            this.notificacionService.success(
-                `✅ Reserva seleccionada: ${result.minutosReservados} minutos, Fecha: ${new Date(result.fechaReserva).toLocaleString()}`
-            );
+          this.notificacionService.success(
+            `✅ Reserva seleccionada: ${result.minutosReservados} minutos, Fecha: ${new Date(
+              result.fechaReserva
+            ).toLocaleString()}`
+          );
         }
-    });
-}
-    // --- ACCIONES DEL MODAL ---
+      });
+  }
+  // --- ACCIONES DEL MODAL ---
 
-    save(): void {
-        // Asegurarse de que no estamos cargando y que el formulario es válido
-        if ( this.form.invalid) {
-            this.form.markAllAsTouched();
-            console.log('Formulario inválido:', this.form.value);
+  save(): void {
+    // Asegurarse de que no estamos cargando y que el formulario es válido
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      console.log('Formulario inválido:', this.form.value);
       this.notificacionService.error('Por favor completa todos los campos requeridos.');
-            return;
-        }
+      return;
+    }
 
-        ///////por aqui del doble
-       // 2. Extraer los datos necesarios del formulario
+    ///////por aqui del doble
+    // 2. Extraer los datos necesarios del formulario
     const { vehiculoId, fechaReserva, minutosReservados } = this.form.value;
 
     // 3. Construir el DTO (Data Transfer Object) para el backend
     const reprogramacionDTO: ReprogramacionRequestDTO = {
-        // Asegúrate de que los nombres de las propiedades coincidan con el DTO esperado por tu servicio.
-        id:0,//no pasa igual
-        vehiculoId: vehiculoId,
-        nuevaFecha: fechaReserva, // Asumimos que 'nuevaFecha' es el campo esperado por el backend
-        minutosReservados: minutosReservados
+      // Asegúrate de que los nombres de las propiedades coincidan con el DTO esperado por tu servicio.
+      id: 0, //no pasa igual
+      vehiculoId: vehiculoId,
+      nuevaFecha: fechaReserva, // Asumimos que 'nuevaFecha' es el campo esperado por el backend
+      minutosReservados: minutosReservados,
     };
-this.reservaService
-        .reprogramar(this.reservaId, reprogramacionDTO)
-        .subscribe({
-            next: (res) => {
-                // this.isLoading = false; 
-                this.notificacionService.success(
-                    '✅ Reserva reprogramada exitosamente!'
-                );
-                // Cerrar el modal y devolver la reserva actualizada (si el backend la devuelve)
-                this.dialogRef.close(res); 
-            },
-            error: (err) => {
-                // this.isLoading = false; 
-                console.error('Error al reprogramar reserva:', err);
-                // Si el error contiene un mensaje específico (ej: cruce de horario), úsalo
-                const mensajeError = err.error?.message || 'Ocurrió un error al reprogramar. Verifica los horarios.';
-                this.notificacionService.error(mensajeError);
-            },
-        });
-    }
+    this.reservaService.reprogramar(this.reservaId, reprogramacionDTO).subscribe({
+      next: (res) => {
+        // this.isLoading = false;
+        this.notificacionService.success('✅ Reserva reprogramada exitosamente!');
+        // Cerrar el modal y devolver la reserva actualizada (si el backend la devuelve)
+        this.dialogRef.close(res);
+      },
+      error: (err) => {
+        // this.isLoading = false;
+        console.error('Error al reprogramar reserva:', err);
+        // Si el error contiene un mensaje específico (ej: cruce de horario), úsalo
+        const mensajeError =
+          err.error?.message || 'Ocurrió un error al reprogramar. Verifica los horarios.';
+        this.notificacionService.error(mensajeError);
+      },
+    });
+  }
 
-    close(): void {
-        this.dialogRef.close();
-    }
+  close(): void {
+    this.dialogRef.close();
+  }
 }
+

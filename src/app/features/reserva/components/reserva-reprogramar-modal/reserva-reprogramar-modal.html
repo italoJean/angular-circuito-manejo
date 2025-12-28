@@ -1,38 +1,39 @@
-<!-- <h2 mat-dialog-title class="dialog-header">
-  <div class="header-content">
-    <mat-icon class="title-icon">update</mat-icon>
-    <span>Reprogramar Reserva #{{ reservaId }}</span>
-  </div>
+<h2 mat-dialog-title class="repro-modal__title">
+  <mat-icon class="repro-modal__title-icon">update</mat-icon>
+  <span>Reprogramar Reserva #{{ reservaId }}</span>
 </h2>
 
-<mat-dialog-content class="dialog-body" [formGroup]="form">
-  
-   @if (isLoading()) {
-  <div class="loading-state">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Recuperando información de la reserva...</p>
+<mat-dialog-content class="repro-modal__content" [formGroup]="form">
+  @if (!isLoading) {
+  <div class="repro-modal__loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando datos de la reserva...</p>
   </div>
   } @else if (reservaOriginal) {
-  <div class="summary-box">
+  <div class="repro-modal__info-card">
     <div class="info-item">
       <mat-icon>event_note</mat-icon>
       <div>
-        <label>Fecha Actual</label>
-        <span>{{ reservaOriginal.fechaReserva | date : 'dd/MM/yyyy HH:mm' }}</span>
+        <span class="info-item__label">Fecha Actual</span>
+        <span class="info-item__value">{{
+          reservaOriginal.fechaReserva | date : 'dd/MM/yyyy HH:mm'
+        }}</span>
       </div>
     </div>
     <div class="info-item">
       <mat-icon>directions_car</mat-icon>
       <div>
-        <label>Vehículo</label>
-        <span>{{ reservaOriginal.vehiculo.placa }} ({{ reservaOriginal.vehiculo.modelo }})</span>
+        <span class="info-item__label">Vehículo</span>
+        <span class="info-item__value"
+          >{{ reservaOriginal.vehiculo.placa }} ({{ reservaOriginal.vehiculo.modelo }})</span
+        >
       </div>
     </div>
     <div class="info-item">
       <mat-icon>person</mat-icon>
       <div>
-        <label>Cliente</label>
-        <span
+        <span class="info-item__label">Cliente</span>
+        <span class="info-item__value"
           >{{ reservaOriginal.pago.usuario.nombre }}
           {{ reservaOriginal.pago.usuario.apellido }}</span
         >
@@ -40,214 +41,80 @@
     </div>
   </div>
 
-  <div class="form-container">
-    <div class="section-divider">
-      <span>Configuración de la Nueva Fecha</span>
+  <p class="repro-modal__helper-text">
+    <mat-icon>info</mat-icon> Selecciona un nuevo vehículo y rango de horario.
+  </p>
+
+  <div class="repro-modal__form-grid">
+    <div class="repro-modal__section">
+      <h3 class="repro-modal__section-title">Datos del Vehículo</h3>
+      <mat-form-field appearance="fill" class="repro-modal__field">
+        <mat-icon matPrefix>car_rental</mat-icon>
+        <mat-label>Vehículo</mat-label>
+        <mat-select formControlName="vehiculoId">
+          <mat-optgroup label="Buscar Vehiculo">
+            <div class="repro-modal__search-container">
+              <mat-form-field class="search-field">
+                <mat-icon matPrefix>search</mat-icon>
+                <input
+                  matInput
+                  placeholder="Placa o marca"
+                  (keyup)="filtroVehiculo.set($event.target.value)"
+                />
+              </mat-form-field>
+            </div>
+          </mat-optgroup>
+          @for (vehiculo of vehiculosFiltrados; track vehiculo.id) {
+          <mat-option [value]="vehiculo.id">
+            {{ vehiculo.placa }} — {{ vehiculo.marca }} ({{ vehiculo.modelo }})
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Seleccionar Vehículo</mat-label>
-      <mat-select formControlName="vehiculoId">
-        <div class="sticky-search">
-          <mat-form-field appearance="fill" class="search-inner">
-            <mat-icon matPrefix>search</mat-icon>
-            <input
-              matInput
-              placeholder="Filtrar placa o marca..."
-              (keyup)="filtroVehiculo.set($any($event.target).value)"
-            />
-          </mat-form-field>
-        </div>
+    <div class="repro-modal__section">
+      <h3 class="repro-modal__section-title">Nueva Programación</h3>
+      <div class="repro-modal__calendar-box">
+        <mat-form-field appearance="outline" class="repro-modal__field">
+          <mat-label>Fecha y Hora Seleccionada</mat-label>
+          <input
+            matInput
+            formControlName="fechaReserva"
+            readonly
+            placeholder="Click en el botón lateral"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="openCalendarDialog()"
+            [disabled]="form.get('vehiculoId')?.invalid"
+            color="primary"
+          >
+            <mat-icon>calendar_month</mat-icon>
+          </button>
+        </mat-form-field>
 
-        @for (vehiculo of vehiculosFiltrados; track vehiculo.id) {
-        <mat-option [value]="vehiculo.id">
-          {{ vehiculo.placa }} — {{ vehiculo.marca }} ({{ vehiculo.modelo }})
-        </mat-option>
-        }
-      </mat-select>
-      <mat-error>El vehículo es obligatorio para ver disponibilidad.</mat-error>
-    </mat-form-field>
-
-    <button
-      type="button"
-      mat-flat-button
-      color="accent"
-      class="calendar-trigger-btn"
-      (click)="openCalendarDialog()"
-      [disabled]="form.get('vehiculoId')?.invalid || isSaving()"
-    >
-      <mat-icon>calendar_today</mat-icon>
-      {{
-        form.get('fechaReserva')?.value
-          ? 'Cambiar Fecha/Hora'
-          : 'Abrir Calendario de Disponibilidad'
-      }}
-    </button>
-
-    <div class="grid-inputs">
-      <mat-form-field appearance="outline">
-        <mat-label>Nueva Fecha Seleccionada</mat-label>
-        <input
-          matInput
-          formControlName="fechaReserva"
-          readonly
-          placeholder="Pendiente de selección"
-        />
-        <mat-icon matSuffix>event</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Duración (Minutos)</mat-label>
-        <input matInput type="number" formControlName="minutosReservados" readonly />
-        <mat-icon matSuffix>schedule</mat-icon>
-        <mat-hint>Calculado por el calendario</mat-hint>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="repro-modal__field">
+          <mat-label>Minutos</mat-label>
+          <input matInput type="number" formControlName="minutosReservados" readonly />
+          <mat-icon matPrefix>timer</mat-icon>
+        </mat-form-field>
+      </div>
     </div>
   </div>
 
   } @else {
-  <div class="error-state">
-    <mat-icon color="warn">error</mat-icon>
+  <div class="repro-modal__error">
+    <mat-icon>error_outline</mat-icon>
     <p>No se pudo cargar la información de la reserva.</p>
-    <button mat-button (click)="loadDetalleReserva()">Reintentar</button>
   </div>
   }
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="dialog-footer">
-  <button mat-button (click)="close()" [disabled]="isSaving()">Cancelar</button>
-
-
-  <button
-    mat-raised-button
-    color="primary"
-    class="submit-btn"
-    (click)="save()"
-    [disabled]="form.invalid || isSaving() || isLoading()"
-  >
-    @if (isSaving()) {
-    <div class="loading-btn-content">
-      <mat-spinner diameter="20" color="primary"></mat-spinner>
-      <span>Procesando...</span>
-    </div>
-    } @else {
-    <span>Confirmar Reprogramación</span>
-    }
+<mat-dialog-actions align="end" class="repro-modal__actions">
+  <button mat-button (click)="close()" class="repro-modal__btn-cancel">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()" class="repro-modal__btn-save">
+    <mat-icon>save</mat-icon> Confirmar
   </button>
-</mat-dialog-actions> -->
-
- <h2 mat-dialog-title class="dialog-title">
-  <mat-icon class="title-icon">update</mat-icon>
-  Reprogramar Reserva #{{ reservaId }}
-</h2>
-
-<mat-dialog-content class="dialog-body" [formGroup]="form">
-  @if (!isLoading) {
-  <div class="loading-box">Cargando datos de la reserva y horarios...</div>
-  } @else if (reservaOriginal) {
-  <div class="info-box-reprogramar">
-    <p><strong>Actual:</strong> {{ reservaOriginal.fechaReserva | date : 'dd/MM/yyyy HH:mm' }}</p>
-    <p>
-      <strong>Vehículo:</strong> {{ reservaOriginal.vehiculo.placa }} ({{
-        reservaOriginal.vehiculo.modelo
-      }})
-    </p>
-    <p>
-      <strong>Cliente:</strong> {{ reservaOriginal.pago.usuario.nombre }}
-      {{ reservaOriginal.pago.usuario.apellido }}
-    </p>
-    <p class="warning-text">Selecciona un nuevo rango de horario en el calendario.</p>
-
-    <div class="section-title">Datos del Vehiculo</div>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-icon matPrefix>car_rental</mat-icon>
-      <mat-label>Vehículo</mat-label>
-
-      <mat-select formControlName="vehiculoId">
-        <mat-optgroup label="Buscar vehículo">
-          <mat-form-field class="search-field">
-            <mat-icon matPrefix>search</mat-icon>
-            <input
-              matInput
-              placeholder="Placa o marca"
-              (keyup)="filtroVehiculo.set($event.target.value)"
-            />
-          </mat-form-field>
-        </mat-optgroup>
-
-        @for (vehiculo of vehiculosFiltrados; track vehiculo.id) {
-        <mat-option [value]="vehiculo.id">
-          {{ vehiculo.placa }} — {{ vehiculo.marca }} ({{ vehiculo.modelo }})
-        </mat-option>
-        }
-      </mat-select>
-
-      <mat-error *ngIf="form.get('vehiculoId')?.hasError('required')">
-        El vehículo es obligatorio
-      </mat-error>
-    </mat-form-field>
-
-    
-      <button
-        mat-stroked-button
-        color="primary"
-        (click)="openCalendarDialog()"
-        class="calendar-btn"
-        [disabled]="form.get('vehiculoId')?.invalid"
-      >
-        <mat-icon>calendar_month</mat-icon>
-        Seleccionar
-      </button>
-
-    <div class="section-title">Datos de la fecha de Reserva</div>
-    <div class="fecha-group">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-icon matPrefix>event</mat-icon>
-        <mat-label>Fecha y Hora de Reserva</mat-label>
-
-        <input
-          matInput
-          formControlName="fechaReserva"
-          readonly
-          placeholder="Seleccione en el calendario"
-        />
-      </mat-form-field>
-
-    </div>
-
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-icon matPrefix>timer</mat-icon>
-      <mat-label>Minutos Reservados</mat-label>
-
-      <input matInput type="number" formControlName="minutosReservados" min="1" />
-      <mat-hint>Establecido por el calendario</mat-hint>
-
-      <mat-error *ngIf="form.get('minutosReservados')?.hasError('required')">
-        Este campo es obligatorio
-      </mat-error>
-
-      <mat-error *ngIf="form.get('minutosReservados')?.hasError('min')">
-        Debe ser al menos 1 minuto
-      </mat-error>
-    </mat-form-field>
-  </div>
-
-  } @else {
-  <div class="error-box">No se pudo cargar la información de la reserva.</div>
-  }
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button mat-button (click)="close()">
-    <mat-icon>close</mat-icon>
-    Cerrar
-  </button>
-  
-    <button 
-        mat-raised-button 
-        (click)="save()" 
-    >
-        <mat-icon>save</mat-icon>
-        Confirmar Reprogramación
-    </button>
 </mat-dialog-actions>

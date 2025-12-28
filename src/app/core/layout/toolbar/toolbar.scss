@@ -28,3 +28,73 @@ mat-drawer{
     border-radius: 0 !important;
     padding: 5px;
 }
+
+
+//websocket
+.notificacion-toast {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  background: #1e1e2d; /* Fondo oscuro elegante */
+  color: white;
+  min-width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 10000; /* Asegura que flote sobre todo */
+  overflow: hidden;
+  animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  gap: 15px;
+}
+
+.toast-icon {
+  font-size: 24px;
+}
+
+.toast-text .mensaje {
+  font-weight: 600;
+  margin: 0;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.toast-text .detalle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #a2a2c2;
+}
+
+.btn-cerrar {
+  background: none;
+  border: none;
+  color: #6c7293;
+  font-size: 22px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.btn-cerrar:hover {
+  color: white;
+}
+
+.barra-progreso {
+  height: 4px;
+  background: #f1c40f; /* Color amarillo de alerta */
+  width: 100%;
+  animation: decrease 10s linear forwards;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(120%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes decrease {
+  from { width: 100%; }
+  to { width: 0%; }
+}

@@ -1,31 +1,33 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject, signal } from '@angular/core';
 import { MetodoPagoEnum } from '../../enum/metodo-pago.enum';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { MaterialModule } from "../../../../shared/ui/material-module";
-import { MatSelect, MatOption } from "@angular/material/select";
+import { MaterialModule } from '../../../../shared/ui/material-module';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-confirmar-pago-cuota-dialog',
-  imports: [MatDialogContent, MaterialModule, MatSelect, MatOption, MatDialogActions],
+  imports: [ MaterialModule],
   templateUrl: './confirmar-pago-cuota-dialog.html',
   styleUrl: './confirmar-pago-cuota-dialog.scss',
 })
 export class ConfirmarPagoCuotaDialog {
+  private readonly _dialogRef = inject(MatDialogRef<ConfirmarPagoCuotaDialog>);
 
-  metodoSeleccionado: MetodoPagoEnum = MetodoPagoEnum.EFECTIVO;
-
+  // SIGNAL para el método seleccionado 
+  metodoSeleccionado = signal<MetodoPagoEnum>(MetodoPagoEnum.EFECTIVO);
   metodosPago = Object.values(MetodoPagoEnum);
 
-  constructor(
-    private dialogRef: MatDialogRef<ConfirmarPagoCuotaDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: { numeroCuota: number }
-  ) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { numeroCuota: number }) {}
 
-  confirmar() {
-    this.dialogRef.close(this.metodoSeleccionado);
+  /**
+   * DEVOLUCIÓN DE DATOS:
+   * En lugar de true/false, devolvemos el valor seleccionado.
+   * Si el usuario cierra o cancela, devolvemos null.
+   */
+  confirmar(): void {
+    this._dialogRef.close(this.metodoSeleccionado());
   }
 
-  cancelar() {
-    this.dialogRef.close(null);
+  cancelar(): void {
+    this._dialogRef.close(null);
   }
 }

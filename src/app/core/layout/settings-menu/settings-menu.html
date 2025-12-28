@@ -6,9 +6,12 @@
 <mat-menu #menu="matMenu">
   <button mat-menu-item>
     <mat-icon>person</mat-icon>
-    <span>Italo Carlos</span>
+    <span class="user-name">{{ user.name }}</span>
+    <!-- <img [src]="user.picture" 
+         [alt]="user.name" 
+         class="avatar">  se recomienda envolver en un if(user)-->
   </button>
-  <button mat-menu-item routerLink="./settings/profile">
+  <!-- <button mat-menu-item routerLink="./settings/profile">
     <mat-icon>info</mat-icon>
     <span>Profile</span>
   </button> 
@@ -23,9 +26,10 @@
    <button mat-menu-item>
     <mat-icon>settings</mat-icon>
     <span>Settings</span>
-  </button>
-   <button mat-menu-item>
+  </button> -->
+   <button mat-menu-item (click)="onLogout()">
     <mat-icon>logout</mat-icon>
+
     <span>Logout</span>
   </button>
 </mat-menu>

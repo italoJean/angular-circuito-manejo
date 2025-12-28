@@ -1,5 +1,4 @@
 import { PaqueteResumenDTO } from "../../paquete/model/paquete-resumen.model";
-import { Paquete } from "../../paquete/model/paquete.model";
 import { UsuarioResumenDTO } from "../../usuario/model/usuario-resumen.model";
 import { EstadoPagoEnum } from "../enum/estado-pago.enum";
 import { MetodoPagoEnum } from "../enum/metodo-pago.enum";

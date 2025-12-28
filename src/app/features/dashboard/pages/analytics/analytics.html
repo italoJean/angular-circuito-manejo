@@ -1,0 +1,90 @@
+<div class="dashboard">
+  <section class="dashboard__kpis">
+    <article class="kpi-card kpi-card--success">
+      <div class="kpi-card__content">
+        <div class="kpi-card__data">
+          <span class="kpi-card__label">Total Recaudado</span>
+          <h3 class="kpi-card__value">S/ {{ totalRecaudado() | number:'1.2-2' }}</h3>
+          <small class="kpi-card__subtext">Dinero en caja</small>
+        </div>
+        <i class="fas fa-money-bill-wave kpi-card__icon"></i>
+      </div>
+    </article>
+
+    <article class="kpi-card kpi-card--primary">
+      <div class="kpi-card__content">
+        <div class="kpi-card__data">
+          <span class="kpi-card__label">Saldo por Cobrar</span>
+          <h3 class="kpi-card__value">S/ {{ saldoPorCobrar() | number:'1.2-2' }}</h3>
+          <small class="kpi-card__subtext">Proyección de ingresos</small>
+        </div>
+        <i class="fas fa-clock kpi-card__icon"></i>
+      </div>
+    </article>
+
+    <article class="kpi-card kpi-card--danger">
+      <div class="kpi-card__content">
+        <div class="kpi-card__data">
+          <span class="kpi-card__label">Saldo perdido</span>
+          <h3 class="kpi-card__value">S/ {{ totalMontoCancelado() | number:'1.2-2' }}</h3>
+          <small class="kpi-card__subtext text-danger">
+            Tasa de pérdida: {{ tasaCancelacion() | number:'1.1-1' }}%
+          </small>
+        </div>
+        <i class="fas fa-clock kpi-card__icon"></i>
+      </div>
+    </article>
+
+    <article class="kpi-card kpi-card--warning">
+      <div class="kpi-card__content">
+        <div class="kpi-card__data">
+          <span class="kpi-card__label">En Riesgo</span>
+          <h3 class="kpi-card__value">{{ clientesRiesgoCritico().enRiesgo }} Clientes</h3>
+          <small class="kpi-card__subtext">Mora leve (15 - 30 días)</small>
+        </div>
+        <i class="fas fa-exclamation-triangle kpi-card__icon"></i>
+      </div>
+    </article>
+
+    <article class="kpi-card kpi-card--danger">
+      <div class="kpi-card__content">
+        <div class="kpi-card__data">
+          <span class="kpi-card__label">En Abandono</span>
+          <h3 class="kpi-card__value">{{ clientesRiesgoCritico().abandono }} Clientes</h3>
+          <small class="kpi-card__subtext">Pérdida de cliente (+30 días)</small>
+        </div>
+        <i class="fas fa-user-slash kpi-card__icon"></i>
+      </div>
+    </article>
+  </section>
+
+  <section class="dashboard__charts">
+    <div class="chart-container">
+      <header class="chart-container__header">Rentabilidad Paquetes</header>
+      <div class="chart-container__body">
+        <canvas id="chartRentabilidad"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <header class="chart-container__header">Uso de Flota por Vehículo</header>
+      <div class="chart-container__body">
+        <canvas id="chartUsoVehiculos"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <header class="chart-container__header">Distribución de Estados de Pago</header>
+      <div class="chart-container__body">
+        <canvas id="chartEstadosPago"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <header class="chart-container__header">Retención vs Deserción</header>
+      <div class="chart-container__body">
+        <canvas id="chartRetencion"></canvas>
+      </div>
+    </div>
+  </section>
+</div>

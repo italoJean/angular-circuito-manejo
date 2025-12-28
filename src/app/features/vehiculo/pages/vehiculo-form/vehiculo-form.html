@@ -4,67 +4,90 @@
 </h2>
 
 <mat-dialog-content [formGroup]="form" class="modal__body form">
+  <div class="form__section-title">Placa</div>
+  <mat-form-field appearance="outline" class="form__field">
+    <mat-label>Placa</mat-label>
+    <mat-icon matPrefix class="form__icon">numbers</mat-icon>
+    <input matInput formControlName="placa" placeholder="ABC-123" />
+    @if (form.get('placa')?.invalid) {
+    <mat-error>
+      {{ getErrorMessage('placa') }}
+    </mat-error>
+    }
+  </mat-form-field>
 
-    <div class="form__section-title">Placa</div>
-    <mat-form-field appearance="outline" class="form__field">
-      <mat-label>Placa</mat-label>
-      <mat-icon matPrefix class="form__icon">numbers</mat-icon>
-      <input matInput formControlName="placa" />
-    </mat-form-field>
+  <div class="form__section-title">Marca</div>
+  <mat-form-field appearance="outline" class="form__field">
+    <mat-label>Marca</mat-label>
+    <mat-icon matPrefix class="form__icon">branding_watermark</mat-icon>
+    <input matInput formControlName="marca" />
+    @if (form.get('marca')?.invalid) {
+    <mat-error>
+      {{ getErrorMessage('marca') }}
+    </mat-error>
+    }
+  </mat-form-field>
 
-    <div class="form__section-title">Marca</div>
-    <mat-form-field appearance="outline" class="form__field">
-      <mat-label>Marca</mat-label>
-      <mat-icon matPrefix class="form__icon">branding_watermark</mat-icon>
-      <input matInput formControlName="marca" />
-    </mat-form-field>
+  <div class="form__section-title">Modelo</div>
+  <mat-form-field appearance="outline" class="form__field">
+    <mat-label>Modelo</mat-label>
+    <mat-icon matPrefix class="form__icon">model_training</mat-icon>
+    <input matInput formControlName="modelo" />
+    @if (form.get('modelo')?.invalid) {
+    <mat-error>
+      {{ getErrorMessage('modelo') }}
+    </mat-error>
+    }
+  </mat-form-field>
 
-    <div class="form__section-title">Modelo</div>
-    <mat-form-field appearance="outline" class="form__field">
-      <mat-label>Modelo</mat-label>
-      <mat-icon matPrefix class="form__icon">model_training</mat-icon>
-      <input matInput formControlName="modelo" />
-    </mat-form-field>
-
-    <div class="form__section-title">Tipo Transmisión</div>
-    <mat-form-field appearance="outline" class="form__field form__field--select">
-      <mat-label>Tipo Transmisión</mat-label>
-      <mat-icon matPrefix class="form__icon">settings</mat-icon>
-      <mat-select formControlName="tipoTransmision">
-        @for (tipo of tiposTransmision; track $index) {
-          <mat-option  [value]="tipo">{{ tipo }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
- 
-      @if (isEditing) {
-        <div class="form__section-title">
-          Estado 
-          @if (form.get('estado')?.disabled) {
-            <span style="font-size: 0.7em; color: #e74c3c; margin-left: 8px;">(Bloqueado: Vehículo Reservado)</span>
-          }
-        </div>
-        <mat-form-field appearance="outline" class="form__field form__field--select">
-          <mat-label>Estado</mat-label>
-          <mat-icon matPrefix class="form__icon">traffic</mat-icon>
-          <mat-select formControlName="estado">
-            @for (est of opcionesEstado; track est) {
-              <mat-option [value]="est">{{ est }}</mat-option>
-            }
-          </mat-select>
-          @if (form.get('estado')?.disabled) {
-            <mat-hint>No se puede cambiar el estado de un vehículo con reserva activa.</mat-hint>
-          }
-        </mat-form-field>
+  <div class="form__section-title">Tipo Transmisión</div>
+  <mat-form-field appearance="outline" class="form__field form__field--select">
+    <mat-label>Tipo Transmisión</mat-label>
+    <mat-icon matPrefix class="form__icon">settings</mat-icon>
+    <mat-select formControlName="tipoTransmision">
+      @for (tipo of tiposTransmision; track tipo) {
+      <mat-option [value]="tipo">{{ tipo }}</mat-option>
       }
-  
+    </mat-select>
+    @if (form.get('tipoTransmision')?.invalid) {
+    <mat-error>
+      {{ getErrorMessage('tipoTransmision') }}
+    </mat-error>
+    }
+  </mat-form-field>
+
+  @if (isEditing) {
+  <div class="form__section-title">
+    Estado @if (form.get('estado')?.disabled) {
+    <span style="font-size: 0.7em; color: #e74c3c; margin-left: 8px"
+      >(Bloqueado: Vehículo Reservado)</span
+    >
+    }
+  </div>
+  <mat-form-field appearance="outline" class="form__field form__field--select">
+    <mat-label>Estado</mat-label>
+    <mat-icon matPrefix class="form__icon">traffic</mat-icon>
+    <mat-select formControlName="estado">
+      @for (est of opcionesEstado; track est) {
+      <mat-option [value]="est">{{ est }}</mat-option>
+      }
+    </mat-select>
+    @if (form.get('estado')?.disabled) {
+    <mat-hint>No se puede cambiar el estado con reserva activa.</mat-hint>
+    }
+  </mat-form-field>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="modal__actions">
-  <button mat-button (click)="close()">Cancelar</button>
-  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid">
-              <mat-icon>save</mat-icon>
+  <button mat-button (click)="close()" [disabled]="loading">Cancelar</button>
+
+  <button mat-flat-button (click)="save()" [disabled]="form.invalid || loading">
+    <mat-icon>save</mat-icon>
+    @if (loading) {
+    <mat-spinner diameter="18" style="margin-right: 8px; display: inline-block"></mat-spinner>
+    Enviando... } @else {
     {{ isEditing ? 'Actualizar' : 'Guardar' }}
+    }
   </button>
 </mat-dialog-actions>

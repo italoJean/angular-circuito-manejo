@@ -17,16 +17,17 @@ import { EMPTY, switchMap } from 'rxjs';
   styleUrl: './paquete-list.scss',
 })
 export class PaqueteList implements OnInit {
+  // INYECCIÓN DE SERVICIOS
   private readonly _modalService = inject(ModalService);
   private readonly _paqueteService = inject(PaqueteService);
   private readonly _notificacionService = inject(NotificacionService);
   private readonly _dialogService = inject(DialogService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef); // Gestión automática de desuscripciones
 
-  // Guarda el estado de la lista de paquetes.
+  // Almacena la lista de paquetes. Los signals notifican a la vista solo cuando el valor cambia.
   data = signal<Paquete[]>([]);
 
-  // Define las columnas que se mostrarán en la tabla (app-grid)
+  // Configuración de la tabla (app-grid reutilizable)
   displayedColumns: Array<string> = [
     'id',
     'nombre',
@@ -36,92 +37,100 @@ export class PaqueteList implements OnInit {
     'action',
   ];
 
-  // Lista de columnas ordenables en la tabla (las que se pueden ordenar)
-  sortables: Array<string> = [
-    'id',
-    'nombre',
-    'duracionMinutos',
-    'precioTotal',
-  ] as const;
+  // Columnas que permiten ordenamiento (deben coincidir con los nombres en la DB)
+  sortables: Array<string> = ['id', 'nombre', 'duracionMinutos', 'precioTotal'];
 
+  // Etiquetas amigables para las cabeceras de la tabla
   readonly columnLabels = signal<Record<string, string>>({
     id: 'ID',
     nombre: 'Nombre',
     descripcion: 'Descripción',
-    duracionMinutos: 'Duración',
+    duracionMinutos: 'Duración (Min)',
     precioTotal: 'Precio',
-    action: 'Acción',
+    action: 'Acciones',
   });
 
   ngOnInit(): void {
     this.loadPaquetes();
   }
 
+  /**
+   * CARGA DE DATOS:
+   * Se añade pipe(takeUntilDestroyed) por si el usuario cambia de página
+   * antes de que la API responda.
+   */
   loadPaquetes() {
-    this._paqueteService.findAll().subscribe({
-      //se suscribe a la respuesta (Observable)
-      next: (paquetes) => {
-        // Actualiza el signal data con this.data.set(paquetes)
-        this.data.set(paquetes);
-        // console.log('Paquetes cargados:', paquetes);
-      },
-      error: (error) => {
-        console.error('Error al cargar paquetes:', error);
-        this._notificacionService.error('Error al cargar paquetes');
-      },
-    });
+    this._paqueteService
+      .findAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (paquetes) => this.data.set(paquetes),
+        error: (error) => {
+          console.error('Error:', error);
+          this._notificacionService.error('No se pudo cargar la lista de paquetes');
+        },
+      });
   }
 
+  // MODALES: Recargan la lista solo si hubo una acción exitosa (devuelven objeto nuevo/editado)
   openCreateModal(): void {
-    this._modalService.openModal(PaqueteForm)
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe((nuevo) => {
-      if (nuevo) {
-        this._notificacionService.success('Paquete creado correctamente');
-        this.loadPaquetes();
-      }
-    });
+    this._modalService
+      .openModal(PaqueteForm)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((nuevo) => {
+        if (nuevo) {
+          this._notificacionService.success('Paquete creado correctamente');
+          this.loadPaquetes();
+        }
+      });
   }
 
   openEditModal(paquete: Paquete): void {
-    this._modalService.openModal(PaqueteForm, paquete)
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe((editado) => {
-      if (editado) {
-        this._notificacionService.success('Paquete actualizado correctamente');
-        this.loadPaquetes();
-      }
-    });
+    this._modalService
+      .openModal(PaqueteForm, paquete)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((editado) => {
+        if (editado) {
+          this._notificacionService.success('Paquete actualizado correctamente');
+          this.loadPaquetes();
+        }
+      });
   }
 
-deletePaquete(paquete: Paquete): void {
-        const paqueteId = paquete.id!; // Asumimos que el ID está presente para la eliminación
-
-        this._dialogService
-            .confirm('Eliminar Paquete', `¿Seguro que deseas eliminar "${paquete.nombre}"?`)
-            .pipe(
-                // Asegura que el observable se complete si el componente muere.
-                takeUntilDestroyed(this.destroyRef), 
-
-                // ENCADENAMIENTO: Espera el resultado del diálogo (true/undefined).
-                //    Si 'confirmed' es true, switchMap cambia al Observable de la llamada DELETE.
-                //    Si es false/undefined (cancelar), switchMap devuelve EMPTY para detener el flujo.
-                switchMap((confirmed) => {
-                    if (confirmed) {
-                        return this._paqueteService.delete(paqueteId);
-                    }
-                    // Retornar EMPTY detiene la ejecución del subscribe(next).
-                    return EMPTY;
-                })
-            )
-            .subscribe({
-                //  RESULTADO: Este 'next' solo se ejecuta si la API DELETE es exitosa.
-                next: () => {
-                    this._notificacionService.success('Paquete eliminado correctamente');
-                    this.loadPaquetes();
-                },
-                //  ERROR: Captura cualquier error de la llamada DELETE.
-                error: () => this._notificacionService.error('Error al eliminar paquete'),
-            });
+  /**
+   *  FLUJO DE ELIMINACIÓN (Declarativo):
+   * 1. Pide confirmación.
+   * 2. Si confirma, switchMap "salta" a la llamada del servicio DELETE.
+   * 3. Si no confirma, EMPTY mata el flujo y no pasa nada.
+   */
+  deletePaquete(paquete: Paquete): void {
+    // Seguridad: Evita llamadas si el ID es nulo
+    if (!paquete.id) {
+      this._notificacionService.error('El paquete no tiene un ID válido');
+      return;
     }
+
+    this._dialogService
+      .confirm('Eliminar Paquete', `¿Seguro que deseas eliminar "${paquete.nombre}"?`)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef), 
+        switchMap((confirmed) => {
+          if (confirmed) {
+            return this._paqueteService.delete(paquete.id!);
+          }
+          return EMPTY; // Detiene el flujo sin ejecutar el subscribe(next)
+        })
+      )
+      .subscribe({
+        next: () => {
+          this._notificacionService.success('Paquete eliminado correctamente');
+          this.loadPaquetes(); // Refresca la tabla
+        },
+        error: (err) => {
+          // Captura si el paquete está siendo usado en alguna reserva (FK Constraint)
+          const msg = err.error?.mensaje || 'Error al eliminar: el paquete puede estar en uso';
+          this._notificacionService.error(msg);
+        }
+      });
   }
+}

@@ -5,7 +5,7 @@
 
 <mat-dialog-content class="detail-dialog-content">
   @if (data) {
-  <!-- Tarjeta de Información del Usuario -->
+
   <mat-card class="info-card usuario-card">
     <mat-card-header>
       <mat-card-title> <mat-icon>person</mat-icon> Información del Usuario </mat-card-title>
@@ -17,18 +17,18 @@
           <span class="value">{{ usuarioCompleto }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Email:</span> <span class="value">{{ usuarioEmail }}</span>
+          <span class="label">Email:</span> <span class="value">{{ data.usuario.email }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Teléfono:</span> <span class="value">{{ usuarioTelefono }}</span>
+          <span class="label">Teléfono:</span> <span class="value">{{ data.usuario.telefono }}</span>
         </div>
         <div class="info-item">
           <span class="label">Tipo de Documento:</span>
-          <span class="value">{{ usuarioTipoDocumento }}</span>
+          <span class="value">{{ data.usuario.tipoDocumento }}</span>
         </div>
         <div class="info-item">
           <span class="label">N° Documento:</span>
-          <span class="value">{{ usuarioNumeroDocumento }}</span>
+          <span class="value">{{ data.usuario.numeroDocumento }}</span>
         </div>
       </div>
     </mat-card-content>
@@ -43,24 +43,23 @@
       <div class="info-grid">
         <div class="info-item">
           <span class="label">Nombre del Paquete:</span>
-          <span class="value">{{ paqueteInfo }}</span>
+          <span class="value">{{ data.paquete.nombre }}</span>
         </div>
         <div class="info-item">
           <span class="label">Descripción:</span>
-          <span class="value">{{ paqueteDescripcion }}</span>
+          <span class="value">{{ data.paquete.descripcion }}</span>
         </div>
         <div class="info-item">
           <span class="label">Duración:</span> <span class="value">{{ paqueteDuracion }}</span>
         </div>
         <div class="info-item">
           <span class="label">Precio del Paquete:</span>
-          <span class="value monto">{{ paquetePrecio }}</span>
+          <span class="value monto">{{ formatMonto(data.paquete.precioTotal) }}</span>
         </div>
       </div>
     </mat-card-content>
   </mat-card>
 
-  <!-- Tarjeta de Información del Pago -->
   <mat-card class="info-card pago-card">
     <mat-card-header>
       <mat-card-title> <mat-icon>receipt</mat-icon> Información del Pago </mat-card-title>
@@ -95,12 +94,11 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Tabla de Cuotas con Resumen -->
   @if (isPagoCuotas && hasCuotas) {
   <mat-card class="info-card cuotas-card">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon>event_note</mat-icon> Detalle de Cuotas ({{ totalCuotas }} cuotas)
+        <mat-icon>list_alt</mat-icon> Cronograma de Pagos
       </mat-card-title>
     </mat-card-header>
     
@@ -158,7 +156,7 @@
 
           <!-- Columna Acción (Cancelar / Pagar + Suspender) -->
           <ng-container matColumnDef="acciones">
-            <th mat-header-cell *matHeaderCellDef class="acciones">Acción</th>
+            <th mat-header-cell *matHeaderCellDef class="acciones">Acciones</th>
             <td mat-cell *matCellDef="let cuota" class="acciones">
               <div class="action-buttons">
                 @if (cuota.estadoCuota === 'PENDIENTE') {
@@ -177,7 +175,7 @@
                   mat-icon-button
                   color="warn"
                   matTooltip="Suspender cuota"
-                  (click)="onSuspendPago3()"
+                  (click)="onSuspendPago()"
                   class="btn-suspend"
                 >
                   <mat-icon>pause_circle</mat-icon>
@@ -188,7 +186,7 @@
                 </span>
                 } @else if (cuota.estadoCuota === 'SUSPENDIDO') {
                 <span class="text-suspended" aria-hidden="true" matTooltip="Cuota suspendida">
-                  <mat-icon>pause_circle</mat-icon>
+                  <mat-icon>block</mat-icon>
                 </span>
                 }
               </div>

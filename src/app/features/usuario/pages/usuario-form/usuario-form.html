@@ -5,58 +5,83 @@
 
 <mat-dialog-content [formGroup]="form" class="modal__body form">
 
-  <div class="form__section-title">Nombre</div>
-  <mat-form-field appearance="outline" class="form__field">
-    <mat-label>Nombre</mat-label>
-    <mat-icon matPrefix class="form__icon">badge</mat-icon>
-    <input matInput formControlName="nombre" />
-  </mat-form-field>
-
-  <div class="form__section-title">Apellido</div>
-  <mat-form-field appearance="outline" class="form__field">
-    <mat-label>Apellido</mat-label>
-    <mat-icon matPrefix class="form__icon">badge</mat-icon>
-    <input matInput formControlName="apellido" />
-  </mat-form-field>
-
-  <div class="form__section-title">Tipo Documento</div>
-  <mat-form-field appearance="outline" class="form__field form__field--select">
-    <mat-label>Tipo Documento</mat-label>
-    <mat-icon matPrefix class="form__icon">menu_book</mat-icon>
-    <mat-select formControlName="tipoDocumento">
-      @for (tipo of tipoDocumentos; track $index) {
-        <mat-option [value]="tipo">{{ tipo }}</mat-option>
+  <div class="form__section-title">Información Personal</div>
+  <div class="form__row">
+    <mat-form-field appearance="outline" class="form__field">
+      <mat-label>Nombre</mat-label>
+      <mat-icon matPrefix class="form__icon">badge</mat-icon>
+      <input matInput formControlName="nombre" placeholder="Ej. Juan" />
+      @if (form.get('nombre')?.invalid) {
+        <mat-error>{{ getErrorMessage('nombre') }}</mat-error>
       }
-    </mat-select>
-  </mat-form-field>
+    </mat-form-field>
 
-  
-  <div class="form__section-title">Numero Documento</div>
-  <mat-form-field appearance="outline" class="form__field">
-    <mat-label>Numero Documento</mat-label>
-    <mat-icon matPrefix class="form__icon">fingerprint</mat-icon>
-    <input matInput type="number" formControlName="numeroDocumento" />
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="form__field">
+      <mat-label>Apellido</mat-label>
+      <mat-icon matPrefix class="form__icon">badge</mat-icon>
+      <input matInput formControlName="apellido" placeholder="Ej. Pérez" />
+      @if (form.get('apellido')?.invalid) {
+        <mat-error>{{ getErrorMessage('apellido') }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
 
-  <div class="form__section-title">Telefono </div>
+  <div class="form__section-title">Identificación</div>
+  <div class="form__row">
+    <mat-form-field appearance="outline" class="form__field">
+      <mat-label>Tipo Documento</mat-label>
+      <mat-icon matPrefix class="form__icon">menu_book</mat-icon>
+      <mat-select formControlName="tipoDocumento">
+        @for (tipo of tipoDocumentos; track tipo) {
+          <mat-option [value]="tipo">{{ tipo }}</mat-option>
+        }
+      </mat-select>
+      @if (form.get('tipoDocumento')?.invalid) {
+        <mat-error>{{ getErrorMessage('tipoDocumento') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form__field">
+      <mat-label>Número Documento</mat-label>
+      <mat-icon matPrefix class="form__icon">fingerprint</mat-icon>
+      <input matInput formControlName="numeroDocumento" inputmode="numeric" />
+      @if (form.get('numeroDocumento')?.invalid) {
+        <mat-error>{{ getErrorMessage('numeroDocumento') }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form__section-title">Contacto</div>
   <mat-form-field appearance="outline" class="form__field">
-    <mat-label>Telefono</mat-label>
+    <mat-label>Teléfono</mat-label>
     <mat-icon matPrefix class="form__icon">phone</mat-icon>
-    <input matInput type="number" formControlName="telefono" />
+    <input matInput formControlName="telefono" inputmode="numeric" maxlength="9" placeholder="+51 999 999 999" />
+    @if (form.get('telefono')?.invalid) {
+      <mat-error>{{ getErrorMessage('telefono') }}</mat-error>
+    }
   </mat-form-field>
 
-  <div class="form__section-title">Email </div>
   <mat-form-field appearance="outline" class="form__field">
     <mat-label>Email</mat-label>
     <mat-icon matPrefix class="form__icon">email</mat-icon>
-    <input matInput type="email" formControlName="email" />
+    <input matInput type="email" formControlName="email" placeholder="juan.perez@email.com" />
+    @if (form.get('email')?.invalid) {
+      <mat-error>{{ getErrorMessage('email') }}</mat-error>
+    }
   </mat-form-field>
+
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="modal__actions">
-  <button mat-button (click)="close()">Cancelar</button>
-  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid">
+  <button mat-button (click)="close()" [disabled]="loading">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || loading">
     <mat-icon>save</mat-icon>
-    {{ isEditing ? 'Actualizar' : 'Guardar' }}
+    @if (loading) {
+      <mat-spinner diameter="18" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+      Guardando...
+    } @else {
+      
+      {{ isEditing ? 'Actualizar' : 'Guardar' }}
+    }
   </button>
 </mat-dialog-actions>

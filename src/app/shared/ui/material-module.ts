@@ -18,6 +18,8 @@ import { MatInputModule } from "@angular/material/input";
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
+import {MatExpansionModule} from '@angular/material/expansion';
+
 @NgModule({
     exports: [
         MatDialogModule,
@@ -38,7 +40,8 @@ import {MatSelectModule} from '@angular/material/select';
         MatPaginatorModule,
         MatSortModule,
         MatFormFieldModule,
-        MatInputModule
+        MatInputModule,
+        MatExpansionModule
     ],
 })
 export class MaterialModule {}

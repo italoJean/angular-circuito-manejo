@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 
@@ -57,5 +57,13 @@ export class ReservaService {
       findAllCalendario(): Observable<HorarioOcupadoDTO[]> {
       return this.http.get<HorarioOcupadoDTO[]>(`${this.baseUrl}/calendario`);
     }
+
+    getHorariosOcupados(vehiculoId: number, pagoId: number): Observable<HorarioOcupadoDTO[]> {
+  const params = new HttpParams()
+    .set('vehiculoId', vehiculoId.toString())
+    .set('pagoId', pagoId.toString());
+
+  return this.http.get<HorarioOcupadoDTO[]>(`${this.baseUrl}/horarios`, { params });
+}
   }
   

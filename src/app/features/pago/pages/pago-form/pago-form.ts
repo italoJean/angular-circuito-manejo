@@ -1,6 +1,6 @@
-import { Component, Inject, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Component, computed, DestroyRef, Inject, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PagoService } from '../../services/pago.service';
 import { PaqueteService } from '../../../paquete/services/paquete.service';
 import { UsuarioService } from '../../../usuario/services/usuario.service';
@@ -8,31 +8,15 @@ import { NotificacionService } from '../../../../shared/services/notificacion.se
 import { Usuario } from '../../../usuario/model/usuario.model';
 import { Paquete } from '../../../paquete/model/paquete.model';
 import { MaterialModule } from "../../../../shared/ui/material-module";
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatTimepickerModule } from '@angular/material/timepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
 import { MetodoPagoEnum } from '../../enum/metodo-pago.enum';
-import { TipoPagoEnum } from '../../enum/tipo-pago.enum';
 import { PagoCuotasRequestDTO } from '../../model/pago-cuotas.request.model';
 import { PagoContadoRequestDTO } from '../../model/pago-contado.request.model';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-pago-form',
   imports: [
-    MatSlideToggleModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatTimepickerModule,
-    MatNativeDateModule,
-    FormsModule,
     ReactiveFormsModule,
     CommonModule,
     MaterialModule
@@ -41,157 +25,149 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
   styleUrl: './pago-form.scss',
 })
 export class PagoForm implements OnInit {
+// INYECCIONES
+  private readonly _fb = inject(FormBuilder);
+  private readonly _dialogRef = inject(MatDialogRef<PagoForm>);
+  private readonly _pagoService = inject(PagoService);
+  private readonly _paqueteService = inject(PaqueteService);
+  private readonly _usuarioService = inject(UsuarioService);
+  private readonly _notificacionService = inject(NotificacionService);
+  private readonly _destroyRef = inject(DestroyRef);
 
-  private readonly fb=inject(FormBuilder);
-  private readonly dialogRef=inject(MatDialogRef<PagoForm>);
-  private readonly pagoService=inject(PagoService);
-  private readonly paqueteService=inject(PaqueteService);
-  private readonly usuarioService=inject(UsuarioService);
-  private readonly notificacionService = inject(NotificacionService);
-
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data?: PagoCuotasRequestDTO | PagoContadoRequestDTO
-  ) {}
-
+  // ESTADO
   form!: FormGroup;
   isEditing = false;
-
-  usuarios=signal<Usuario[]>([]);
-  paquetes=signal<Paquete[]>([]);
-
-  // Filtros dinámicos (signals)
+  loading = false;
+  
+  // Catálogos
+  usuarios = signal<Usuario[]>([]);
+  paquetes = signal<Paquete[]>([]);
+  
+  // FILTROS CON SIGNALS
   filtroUsuario = signal('');
   filtroPaquete = signal('');
 
+  // COMPUTED SIGNALS: Se recalculan automáticamente cuando los datos o el filtro cambian
+  usuariosFiltrados = computed(() => {
+    const filter = this.filtroUsuario().toLowerCase();
+    return this.usuarios().filter(u => 
+      u.nombre.toLowerCase().includes(filter) || u.numeroDocumento.includes(filter)
+    );
+  });
 
-    public readonly metodoPagos = Object.values(MetodoPagoEnum);
-    // public readonly estados = Object.values(EstadoVehiculosEnum);
+  paquetesFiltrados = computed(() => {
+    const filter = this.filtroPaquete().toLowerCase();
+    return this.paquetes().filter(p => p.nombre.toLowerCase().includes(filter));
+  });
 
+  public readonly metodoPagos = Object.values(MetodoPagoEnum);
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data?: any) {}
 
   ngOnInit(): void {
-    this.form = this.fb.group({
+    this.isEditing = !!this.data;
+    this.initForm();
+    this.loadInitialData();
+    this.setupConditionalValidation();
+  }
+
+  private initForm(): void {
+    this.form = this._fb.group({
       usuarioId: [this.data?.usuarioId || '', Validators.required],
       paqueteId: [this.data?.paqueteId || '', Validators.required],
       metodoPago: [this.data?.metodoPago || '', Validators.required],
       pagarEnCuotas: [false],
-      cuotas: [ ''],
-      montoPrimerPago: [''],
-      
-    // 🔥 Nuevo campo para controlar si es pago en cuotas
-    pagoEnCuotas: [false], 
-
-    });
-
-    this.isEditing = !!this.data;
-
-    this.loadUsuarios();
-    this.loadPaquetes();
-
-        // Control dinámico de validadores
-    this.form.get('pagarEnCuotas')?.valueChanges.subscribe(value => {
-      if (value) {
-        this.form.get('cuotas')?.setValidators([Validators.required]);
-        this.form.get('montoPrimerPago')?.setValidators([Validators.required]);
-      } else {
-        this.form.get('cuotas')?.clearValidators();
-        this.form.get('montoPrimerPago')?.clearValidators();
-        this.form.get('cuotas')?.reset();
-        this.form.get('montoPrimerPago')?.reset();
-      }
-
-      this.form.get('cuotas')?.updateValueAndValidity();
-      this.form.get('montoPrimerPago')?.updateValueAndValidity();
+      cuotas: [null, [Validators.min(2), Validators.max(12)]],
+      montoPrimerPago: [null, [Validators.min(2)]]
     });
   }
 
-  // 🔹 Cargar usuarios
-  loadUsuarios() {
-    this.usuarioService.findAll().subscribe({
-      next: (usuarios) => this.usuarios.set(usuarios),
-      error: () => this.notificacionService.error('Error al cargar usuarios')
-    });
+  /**
+   * VALIDACIÓN CONDICIONAL: 
+   * Si 'pagarEnCuotas' es true, activamos validadores para cuotas y monto.
+   */
+  private setupConditionalValidation(): void {
+    this.form.get('pagarEnCuotas')?.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(isCuotas => {
+        const cuotasCtrl = this.form.get('cuotas');
+        const montoCtrl = this.form.get('montoPrimerPago');
+
+        if (isCuotas) {
+          cuotasCtrl?.setValidators([Validators.required, Validators.min(2)]);
+          montoCtrl?.setValidators([Validators.required, Validators.min(1)]);
+        } else {
+          cuotasCtrl?.clearValidators();
+          montoCtrl?.clearValidators();
+          cuotasCtrl?.reset();
+          montoCtrl?.reset();
+        }
+        cuotasCtrl?.updateValueAndValidity();
+        montoCtrl?.updateValueAndValidity();
+      });
   }
 
-  // 🔹 Cargar paquetes
-  loadPaquetes() {
-    this.paqueteService.findAll().subscribe({
-      next: (paquetes) => this.paquetes.set(paquetes),
-      error: () => this.notificacionService.error('Error al cargar paquetes')
-    });
+  private loadInitialData(): void {
+    this._usuarioService.findAll().subscribe(data => this.usuarios.set(data));
+    this._paqueteService.findAll().subscribe(data => this.paquetes.set(data));
   }
 
-  // 🔹 Filtrado de usuario por nombre o DNI
-  get usuariosFiltrados(): Usuario[] {
-    const filtro = this.filtroUsuario().toLowerCase();
-    return this.usuarios().filter(u =>
-      u.nombre.toLowerCase().includes(filtro) ||
-      u.numeroDocumento.toLowerCase().includes(filtro)
-    );
+  // ACTUALIZADORES DE FILTRO (Llamados desde el HTML)
+  onFilterUsuario(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.filtroUsuario.set(value);
   }
 
-  // 🔹 Filtrado de paquetes
-  get paquetesFiltrados(): Paquete[] {
-    const filtro = this.filtroPaquete().toLowerCase();
-    return this.paquetes().filter(p =>
-      p.nombre.toLowerCase().includes(filtro)
-    );
+  onFilterPaquete(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.filtroPaquete.set(value);
   }
 
-  // save(): void {
-  //   if (this.form.invalid) return;
-
-  //   const pago = this.form.value as PagoRequest;
-
-  //   const request$ = this.isEditing
-  //     ? this.pagoService.update(pago.id!, pago)
-  //     : this.pagoService.create(pago);
-
-  //   request$.subscribe({
-  //     next: (res) => this.dialogRef.close(res),
-  //     error: (err) => console.error('Error al guardar pago:', err),
-  //   });
-  // }
-
-
-
-  save() {
+  /**
+   * ESTRATEGIA DE GUARDADO:
+   * Dependiendo del toggle, enviamos a un endpoint u otro del PagoService.
+   */
+  save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const usarCuotas = this.form.value.pagarEnCuotas;
+    this.loading = true;
+    const formVal = this.form.value;
 
-    if (usarCuotas) {
-      const request: PagoCuotasRequestDTO = {
-        usuarioId: this.form.value.usuarioId,
-        paqueteId: this.form.value.paqueteId,
-        metodoPago: this.form.value.metodoPago,
-        cuotas: this.form.value.cuotas,
-        montoPrimerPago: this.form.value.montoPrimerPago
-      };
+    const request$ = formVal.pagarEnCuotas 
+      ? this._pagoService.createCuotas(this.mapToCuotasDTO(formVal))
+      : this._pagoService.createContado(this.mapToContadoDTO(formVal));
 
-      this.pagoService.createCuotas(request).subscribe(resp => {
-        this.dialogRef.close(resp);
-      });
-
-    } else {
-      const request: PagoContadoRequestDTO = {
-        usuarioId: this.form.value.usuarioId,
-        paqueteId: this.form.value.paqueteId,
-        metodoPago: this.form.value.metodoPago
-      };
-
-      this.pagoService.createContado(request).subscribe(resp => {
-        console.log("✅ Pago al contado creado:", resp);
-        this.dialogRef.close(resp);
-      });
-    }
+    request$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe({
+      next: (res) => {
+        this._dialogRef.close(res);
+      },
+      error: (err) => {
+        this.loading = false;
+        this._notificacionService.error(err.error?.mensaje || 'Error al procesar el pago');
+      }
+    });
   }
 
-  close(): void {
-    this.dialogRef.close();
+  private mapToCuotasDTO(val: any): PagoCuotasRequestDTO {
+    return {
+      usuarioId: val.usuarioId,
+      paqueteId: val.paqueteId,
+      metodoPago: val.metodoPago,
+      cuotas: val.cuotas,
+      montoPrimerPago: val.montoPrimerPago
+    };
   }
 
+  private mapToContadoDTO(val: any): PagoContadoRequestDTO {
+    return {
+      usuarioId: val.usuarioId,
+      paqueteId: val.paqueteId,
+      metodoPago: val.metodoPago
+    };
+  }
+
+  close(): void { this._dialogRef.close(); }
 }

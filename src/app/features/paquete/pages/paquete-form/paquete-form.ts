@@ -4,112 +4,140 @@ import { PaqueteService } from '../../services/paquete.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Paquete } from '../../model/paquete.model';
 import { MaterialModule } from '../../../../shared/ui/material-module';
-import { CommonModule } from '@angular/common';
+import { NotificacionService } from '../../../../shared/services/notificacion.service';
 
 @Component({
   selector: 'app-paquete-form',
-  imports: [ ReactiveFormsModule,CommonModule, MaterialModule],
+  imports: [ ReactiveFormsModule, MaterialModule],
   templateUrl: './paquete-form.html',
   styleUrl: './paquete-form.scss',
 })
 export class PaqueteForm implements OnInit {
-
   form!: FormGroup;
   isEditing = false;
-  isHours = false;
-  // 🚩 Nueva propiedad para controlar el bloqueo
-  isDuracionBloqueada = false;
+  loading = false;
+  isHours = false; // Estado del toggle
+  isDuracionBloqueada = false; // Bloqueo por integridad referencial (Pagos)
 
-
-  private readonly paqueteService = inject(PaqueteService);
-  private readonly fb = inject(FormBuilder);
-  private readonly dialogRef = inject(MatDialogRef<PaqueteForm>);
+  private readonly _paqueteService = inject(PaqueteService);
+  private readonly _fb = inject(FormBuilder);
+  private readonly _dialogRef = inject(MatDialogRef<PaqueteForm>);
+  private readonly _notificacionService = inject(NotificacionService);
 
   constructor(@Inject(MAT_DIALOG_DATA) public data?: Paquete) {}
 
   ngOnInit(): void {
     this.isEditing = !!this.data;
 
-    this.form = this.fb.group({
+    this.form = this._fb.group({
       id: [this.data?.id],
-      nombre: [this.data?.nombre || '', Validators.required],
-      descripcion: [this.data?.descripcion || ''], 
-      duracionMinutos: [this.data?.duracionMinutos || '', Validators.required],
+      // VALIDACIÓN ESPEJO: @Size(max=100) y @NotBlank
+      nombre: [this.data?.nombre || '', [Validators.required, Validators.maxLength(100)]],
+      // @Size(max=1000)
+      descripcion: [this.data?.descripcion || '', [Validators.maxLength(1000)]],
+      // @Min(30) y @NotNull
+      duracionMinutos: [this.data?.duracionMinutos || '', [Validators.required, Validators.min(30)]],
       duracionHoras: [''],
-      precioTotal: [this.data?.precioTotal || '', Validators.required],
+      // @Digits(fraction=2) y @Min(0)
+      precioTotal: [this.data?.precioTotal || '', [
+        Validators.required, 
+        Validators.min(0),
+        Validators.pattern(/^\d+(\.\d{1,2})?$/) // Asegura max 2 decimales
+      ]],
     });
 
-    // 🚩 Llamada a tu nuevo servicio si estamos editando
+    // Si el paquete tiene pagos, no se puede alterar el tiempo 
     if (this.isEditing && this.data?.id) {
-      this.paqueteService.tienePagos(this.data.id).subscribe({
+      this._paqueteService.tienePagos(this.data.id).subscribe({
         next: (tienePagos) => {
           this.isDuracionBloqueada = tienePagos;
           if (tienePagos) {
-            // Deshabilitamos campos de tiempo y toggle
             this.form.get('duracionMinutos')?.disable();
             this.form.get('duracionHoras')?.disable();
           }
-        },
-        error: (err) => console.error('Error verificando pagos:', err)
+        }
       });
     }
   }
 
-  // Cambiar entre MINUTOS ↔ HORAS
+  // Mantiene sincronizados los minutos con las horas sin romper la validación.
   toggleMode(): void {
-    if (this.isDuracionBloqueada) return; // Seguridad extra
+    if (this.isDuracionBloqueada) return;
     this.isHours = !this.isHours;
 
+    const controlMin = this.form.get('duracionMinutos');
+    const controlHor = this.form.get('duracionHoras');
+
     if (this.isHours) {
-      // pasar minutos a horas
-      const mins = this.form.get('duracionMinutos')?.value;
-      if (mins) this.form.patchValue({ duracionHoras: mins / 60 });
-
-      // deshabilitar validación de minutos
-      this.form.get('duracionMinutos')?.clearValidators();
-      this.form.get('duracionMinutos')?.updateValueAndValidity();
-
-      // activar validación en horas
-      this.form.get('duracionHoras')?.setValidators([Validators.required]);
-      this.form.get('duracionHoras')?.updateValueAndValidity();
+      if (controlMin?.value) controlHor?.setValue(controlMin.value / 60);
+      controlMin?.clearValidators();
+      controlHor?.setValidators([Validators.required, Validators.min(0.5)]); // 0.5h = 30min
     } else {
-      // pasar horas a minutos
-      const hours = this.form.get('duracionHoras')?.value;
-      if (hours) this.form.patchValue({ duracionMinutos: hours * 60 });
-
-      // deshabilitar validación en horas
-      this.form.get('duracionHoras')?.clearValidators();
-      this.form.get('duracionHoras')?.updateValueAndValidity();
-
-      // reactivar validación de minutos
-      this.form.get('duracionMinutos')?.setValidators([Validators.required]);
-      this.form.get('duracionMinutos')?.updateValueAndValidity();
+      if (controlHor?.value) controlMin?.setValue(controlHor.value * 60);
+      controlHor?.clearValidators();
+      controlMin?.setValidators([Validators.required, Validators.min(30)]);
     }
+    
+    controlMin?.updateValueAndValidity();
+    controlHor?.updateValueAndValidity();
+  }
+
+  getErrorMessage(controlName: string): string {
+    const control = this.form.get(controlName);
+    if (!control?.errors) return '';
+
+    if (control.hasError('required')) return 'Este campo es obligatorio';
+    if (control.hasError('min')) {
+      const min = control.errors['min'].min;
+      return `Mínimo valor permitido: ${min}`;
+    }
+    if (control.hasError('maxlength')) return 'Supera el límite de caracteres';
+    if (control.hasError('pattern')) return 'Máximo 2 decimales permitidos';
+    if (control.hasError('serverError')) return control.getError('serverError');
+
+    return 'Campo inválido';
   }
 
   save(): void {
-    if (this.form.invalid) return;
- // 🚩 Usamos getRawValue() para capturar duracionMinutos aunque esté disabled
-    let paquete = this.form.getRawValue() as any;
+    if (this.form.invalid || this.loading) return;
 
-    // Convertir siempre a minutos antes de guardar
+    this.loading = true;
+    // getRawValue(): Crucial para enviar duracionMinutos incluso si está disabled
+    let paquete = this.form.getRawValue();
+
+    // Normalización: El backend solo entiende minutos
     if (this.isHours && !this.isDuracionBloqueada) {
-      paquete.duracionMinutos = paquete.duracionHoras * 60;
+      paquete.duracionMinutos = Math.round(paquete.duracionHoras * 60);
     }
-
     delete paquete.duracionHoras;
 
     const request$ = this.isEditing
-      ? this.paqueteService.update(paquete.id, paquete)
-      : this.paqueteService.create(paquete);
+      ? this._paqueteService.update(paquete.id, paquete)
+      : this._paqueteService.create(paquete);
 
     request$.subscribe({
-      next: (res) => this.dialogRef.close(res),
-      error: (err) => console.error('Error al guardar paquete', err),
+      next: (res) => {
+        this._dialogRef.close(res);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.handleBackendError(err);
+      }
     });
   }
 
-  close(): void {
-    this.dialogRef.close();
+  private handleBackendError(err: any): void {
+    if (err.status === 400 && err.error?.detalles) {
+      err.error.detalles.forEach((detalle: string) => {
+        const [campo, ...mensajeParts] = detalle.split(': ');
+        const mensaje = mensajeParts.join(': ');
+        this.form.get(campo.trim())?.setErrors({ serverError: mensaje });
+      });
+      this._notificacionService.error('Corrija los errores marcados');
+    } else {
+      this._notificacionService.error(err.error?.mensaje || 'Error al procesar');
+    }
   }
+
+  close(): void { this._dialogRef.close(); }
 }

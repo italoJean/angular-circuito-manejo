@@ -1,18 +1,18 @@
 <h2 mat-dialog-title class="dialog-title">
   <mat-icon class="title-icon">attach_money</mat-icon>
-  Confirmar Pago
+  Procesar Pago de Cuota
 </h2>
 
 <mat-dialog-content class="dialog-body">
 
   <p class="dialog-message">
-    ¿Seguro que deseas pagar la cuota
+    Vas a registrar el pago de la cuota
     <strong>#{{ data.numeroCuota }}</strong>?
   </p>
 
   <mat-form-field appearance="fill" class="payment-field">
-    <mat-label>Método de pago</mat-label>
-    <mat-select [(value)]="metodoSeleccionado">
+    <mat-label>Seleccione el medio de pago</mat-label>
+    <mat-select [value]="metodoSeleccionado()" (selectionChange)="metodoSeleccionado.set($event.value)">
       @for (m of metodosPago; track m) {
         <mat-option [value]="m">{{ m }}</mat-option>
       }
@@ -26,6 +26,6 @@
 
   <button mat-flat-button color="primary" class="btn-confirm" (click)="confirmar()">
     <mat-icon>check_circle</mat-icon>
-    Confirmar
+    Registrar Pago
   </button>
 </mat-dialog-actions>

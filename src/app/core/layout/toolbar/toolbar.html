@@ -39,3 +39,17 @@
     <router-outlet></router-outlet>
   </mat-drawer-content>
 </mat-drawer-container>
+
+@if (alertaActual) {
+  <div class="notificacion-toast">
+    <div class="toast-content">
+      <div class="toast-icon">🔔</div>
+      <div class="toast-text">
+        <p class="mensaje">{{ alertaActual.mensaje }}</p>
+        <p class="detalle">Reserva #{{ alertaActual.reservaId }}</p>
+      </div>
+      <button class="btn-cerrar" (click)="alertaActual = null">x</button>
+    </div>
+    <div class="barra-progreso"></div>
+  </div>
+}

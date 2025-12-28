@@ -9,4 +9,5 @@ export interface DetalleReservaResponse {
   fechaReserva: Date;
   fechaFin: Date;
   estado: EstadoReservaEnum;
+  minutosReservados:number;//ultimo por ver
 }
